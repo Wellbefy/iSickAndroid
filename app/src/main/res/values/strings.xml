@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">iSick</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="titel_sjukanmäla">Sjukanmäla</string>
+    <string name="title_historik">Historik</string>
+    <string name="title_inställningar">Inställningar</string>
+</resources>
