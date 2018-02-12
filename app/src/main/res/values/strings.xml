@@ -12,4 +12,5 @@
     <string name="cd_logopicture">logopicture</string>
     <string name="hint_personnummer">personnummer</string>
     <string name="label_vab">VAB</string>
+    <string name="label_skicka">Skicka</string>
 </resources>

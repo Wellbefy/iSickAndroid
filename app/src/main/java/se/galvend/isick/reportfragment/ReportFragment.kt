@@ -27,6 +27,8 @@ class ReportFragment : Fragment() {
             Log.d(TAG, vabSwitch.isChecked.toString())
         }
 
+        
+
     }
 
 }// Required empty public constructor
