@@ -1,4 +1,4 @@
-package se.galvend.isick.user
+package se.galvend.isick.firebase
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference

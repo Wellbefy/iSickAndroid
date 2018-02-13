@@ -13,4 +13,8 @@
     <string name="hint_personnummer">personnummer</string>
     <string name="label_vab">VAB</string>
     <string name="label_skicka">Skicka</string>
+    <string name="label_logga_in">Logga in</string>
+    <string name="hint_email">email</string>
+    <string name="hint_password">lösenord</string>
+    <string name="label_klar">Klar</string>
 </resources>

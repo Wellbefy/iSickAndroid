@@ -1,8 +1,10 @@
 package se.galvend.isick
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.v7.app.AppCompatActivity
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_tab.*
 import se.galvend.isick.historyfragment.HistoryFragment
 import se.galvend.isick.reportfragment.ReportFragment
@@ -49,6 +51,17 @@ class TabActivity : AppCompatActivity() {
                     .beginTransaction()
                     .replace(R.id.fragmentContainer, ReportFragment())
                     .commit()
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        FirebaseAuth.getInstance().addAuthStateListener {
+            if(it.currentUser == null) {
+                val intent = Intent(this, LoginRegisterActivity::class.java)
+                startActivity(intent)
+                this.finish()
+            }
         }
     }
 }
