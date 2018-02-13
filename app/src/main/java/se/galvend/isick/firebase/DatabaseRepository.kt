@@ -1,12 +1,20 @@
 package se.galvend.isick.firebase
 
+import android.arch.lifecycle.MediatorLiveData
+import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.*
+import se.galvend.isick.classes.Kid
+import se.galvend.isick.classes.User
 
 /**
  * Created by dennisgalven on 2018-02-12.
  */
+data class FbKid(val email: String = "",
+                 val personnummer: String = "")
+
+data class FbUser(val name: String = "",
+                  val email: String = "")
 
 class DatabaseRepository {
     companion object {
@@ -22,10 +30,69 @@ class DatabaseRepository {
             if(it.currentUser != null) {
                 uid = it.currentUser!!.uid
                 userDatabaseRef = databaseRef.child("users").child(uid)
+                startListeningToKids()
+                startListeningToUser()
             } else {
                 uid = null
                 userDatabaseRef = null
             }
         }
+    }
+
+    val user : MediatorLiveData<User> = MediatorLiveData()
+
+    private val userEventListener = object : ValueEventListener {
+        override fun onCancelled(error: DatabaseError?) {
+            Log.d(TAG, error?.message)
+        }
+
+        override fun onDataChange(snapshot: DataSnapshot?) {
+            val data = snapshot?.children
+                    ?.map {
+                        val fbUser = it.getValue(FbUser::class.java)
+                        return@map User(fbUser?.name ?: "",
+                                fbUser?.email ?: "")
+                    } ?: emptyList()
+            user.postValue(data.first())
+        }
+    }
+
+    private fun startListeningToUser() {
+        if(userDatabaseRef == null) {
+            return
+        }
+
+        userDatabaseRef?.addValueEventListener(userEventListener)
+    }
+
+    val kids : MediatorLiveData<List<Kid>> = MediatorLiveData()
+
+    private val kidEventListener = object :ValueEventListener {
+        override fun onCancelled(error: DatabaseError?) {
+            //something went wrong
+            Log.d(TAG, error?.message)
+        }
+
+        override fun onDataChange(snapshot: DataSnapshot?) {
+            val data = snapshot?.children
+                    ?.map {
+                        val fbKid = it.getValue(FbKid::class.java)
+                        return@map Kid(it.key ?: "",
+                                fbKid?.personnummer ?: "",
+                                fbKid?.email ?: "")
+                    } ?: emptyList()
+            kids.postValue(data)
+        }
+    }
+
+    private fun startListeningToKids() {
+        if(userDatabaseRef == null) {
+            return
+        }
+        userDatabaseRef?.child("kids")?.addValueEventListener(kidEventListener)
+    }
+
+    fun stopListening() {
+        userDatabaseRef?.child("kids")?.removeEventListener(kidEventListener)
     }
 }

@@ -7,12 +7,15 @@ import android.view.ViewGroup
 import android.widget.Switch
 import android.widget.TextView
 import se.galvend.isick.R
+import se.galvend.isick.classes.Kid
 
 /**
  * Created by dennisgalven on 2018-02-13.
  */
 class KidAdapter: RecyclerView.Adapter<KidViewHolder>() {
-    override fun getItemCount(): Int = 2
+    var kids : List<Kid> = emptyList()
+
+    override fun getItemCount(): Int = kids.count()
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): KidViewHolder {
         val view = LayoutInflater.from(parent?.context).inflate(R.layout.kidrecyclercell, parent, false)
@@ -20,14 +23,15 @@ class KidAdapter: RecyclerView.Adapter<KidViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: KidViewHolder?, position: Int) {
-        holder?.nameLabel?.text = "Alice Galvén"
-        holder?.prsnnrLabel?.text = "081110-8281"
+        val kid = kids[position]
+        holder?.nameLabel?.text = kid.name
+        holder?.prsnNrLabel?.text = kid.personNumber
         holder?.isSickSwitch?.isChecked = false
     }
 
 }
 class KidViewHolder(view: View): RecyclerView.ViewHolder(view) {
     val nameLabel: TextView = view.findViewById(R.id.kidNameLabel)
-    val prsnnrLabel: TextView = view.findViewById(R.id.kidPrsnnrLabel)
+    val prsnNrLabel: TextView = view.findViewById(R.id.kidPrsnnrLabel)
     val isSickSwitch: Switch = view.findViewById(R.id.sickSwitch)
 }
