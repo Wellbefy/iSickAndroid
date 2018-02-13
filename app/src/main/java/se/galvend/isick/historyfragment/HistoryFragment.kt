@@ -23,6 +23,7 @@ class HistoryFragment : Fragment() {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        monthLabel.text = "Februari 2018"
         historyRecycler.adapter = HistoryAdapter()
         historyRecycler.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
     }
