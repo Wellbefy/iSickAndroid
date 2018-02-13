@@ -33,12 +33,102 @@
         tools:text="Februari 2018" />
 
     <ProgressBar
-        android:id="@+id/jobProgress"
-        style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Inverse"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginStart="8dp"
+        android:id="@+id/workProgress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="117dp"
+        android:layout_height="117dp"
         android:layout_marginTop="8dp"
+        android:background="@drawable/circle_shape"
+        android:indeterminate="false"
+        android:max="100"
+        android:progress="69"
+        android:progressDrawable="@drawable/circular_progress_bar"
+        app:layout_constraintEnd_toStartOf="@+id/sickProgress"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/monthLabel" />
+
+    <ProgressBar
+        android:id="@+id/sickProgress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="117dp"
+        android:layout_height="117dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/circle_shape"
+        android:indeterminate="false"
+        android:max="100"
+        android:progress="16"
+        android:progressDrawable="@drawable/purple_circle_shape"
+        app:layout_constraintEnd_toStartOf="@+id/vabProgress"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/workProgress"
+        app:layout_constraintTop_toBottomOf="@+id/monthLabel" />
+
+    <ProgressBar
+        android:id="@+id/vabProgress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="118dp"
+        android:layout_height="117dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/circle_shape"
+        android:indeterminate="false"
+        android:max="100"
+        android:progress="15"
+        android:progressDrawable="@drawable/purple_circle_shape"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/sickProgress"
+        app:layout_constraintTop_toBottomOf="@+id/monthLabel" />
+
+    <TextView
+        android:id="@+id/vabLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/raleway"
+        android:text="VAB:\n15%"
+        android:textAlignment="center"
+        android:textColor="@color/common_google_signin_btn_text_dark_focused"
+        app:layout_constraintBottom_toBottomOf="@+id/vabProgress"
+        app:layout_constraintEnd_toEndOf="@+id/vabProgress"
+        app:layout_constraintStart_toStartOf="@+id/vabProgress"
+        app:layout_constraintTop_toTopOf="@+id/vabProgress" />
+
+    <TextView
+        android:id="@+id/sickLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/raleway"
+        android:text="Sjuk:\n16%"
+        android:textAlignment="center"
+        android:textColor="@color/common_google_signin_btn_text_dark_focused"
+        app:layout_constraintBottom_toBottomOf="@+id/sickProgress"
+        app:layout_constraintEnd_toEndOf="@+id/sickProgress"
+        app:layout_constraintStart_toStartOf="@+id/sickProgress"
+        app:layout_constraintTop_toTopOf="@+id/sickProgress" />
+
+    <TextView
+        android:id="@+id/workLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/raleway"
+        android:text="Närvaro:\n69%"
+        android:textAlignment="center"
+        android:textColor="@color/common_google_signin_btn_text_dark_focused"
+        app:layout_constraintBottom_toBottomOf="@+id/workProgress"
+        app:layout_constraintEnd_toEndOf="@+id/workProgress"
+        app:layout_constraintStart_toStartOf="@+id/workProgress"
+        app:layout_constraintTop_toTopOf="@+id/workProgress" />
+
 </android.support.constraint.ConstraintLayout>
