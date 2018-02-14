@@ -1,6 +1,7 @@
 package se.galvend.isick.reportfragment
 
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +14,9 @@ import se.galvend.isick.classes.Kid
  * Created by dennisgalven on 2018-02-13.
  */
 class KidAdapter: RecyclerView.Adapter<KidViewHolder>() {
+    companion object {
+        val TAG = "KidAdapter"
+    }
     var kids : List<Kid> = emptyList()
 
     override fun getItemCount(): Int = kids.count()
@@ -27,6 +31,10 @@ class KidAdapter: RecyclerView.Adapter<KidViewHolder>() {
         holder?.nameLabel?.text = kid.name
         holder?.prsnNrLabel?.text = kid.personNumber
         holder?.isSickSwitch?.isChecked = false
+
+        holder?.isSickSwitch?.setOnCheckedChangeListener { _, checked ->
+            kid.isSick = checked
+        }
     }
 
 }

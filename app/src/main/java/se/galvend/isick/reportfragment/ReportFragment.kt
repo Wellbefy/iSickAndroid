@@ -25,14 +25,16 @@ class ReportFragment : Fragment() {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        hRCnameLabel.text = "Dennis Galvén"
 
-        vabSwitch.setOnCheckedChangeListener { _, _ ->
-            Log.d(TAG, vabSwitch.isChecked.toString())
+        vabSwitch.setOnCheckedChangeListener { _, checked ->
+            if(checked) kidRecycler.visibility = View.VISIBLE
+            else kidRecycler.visibility = View.GONE
         }
 
         kidRecycler.adapter = KidAdapter()
         kidRecycler.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+
+        kidRecycler.visibility = View.GONE
 
         val viewModel = ViewModelProviders.of(activity).get(UserViewModel::class.java)
 
@@ -40,6 +42,16 @@ class ReportFragment : Fragment() {
             (kidRecycler.adapter as KidAdapter).kids = it ?: emptyList()
             kidRecycler.adapter.notifyDataSetChanged()
         })
+
+        viewModel.user.observe(this, Observer {
+            nameLabel.text = it?.name ?: ""
+        })
+
+        sendButton.setOnClickListener {
+            (kidRecycler.adapter as KidAdapter).kids.forEach {
+                Log.d(TAG, "${it.name}: ${it.isSick}")
+            }
+        }
     }
 
 }// Required empty public constructor

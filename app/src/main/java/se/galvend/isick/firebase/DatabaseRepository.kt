@@ -13,9 +13,6 @@ import se.galvend.isick.classes.User
 data class FbKid(val email: String = "",
                  val personnummer: String = "")
 
-data class FbUser(val name: String = "",
-                  val email: String = "")
-
 class DatabaseRepository {
     companion object {
         val TAG = "DatabaseRepository"
@@ -31,7 +28,7 @@ class DatabaseRepository {
                 uid = it.currentUser!!.uid
                 userDatabaseRef = databaseRef.child("users").child(uid)
                 startListeningToKids()
-                startListeningToUser()
+                getUserInfo()
             } else {
                 uid = null
                 userDatabaseRef = null
@@ -41,28 +38,27 @@ class DatabaseRepository {
 
     val user : MediatorLiveData<User> = MediatorLiveData()
 
-    private val userEventListener = object : ValueEventListener {
+    private val userInfoEventListener = object : ValueEventListener {
         override fun onCancelled(error: DatabaseError?) {
             Log.d(TAG, error?.message)
         }
 
         override fun onDataChange(snapshot: DataSnapshot?) {
-            val data = snapshot?.children
-                    ?.map {
-                        val fbUser = it.getValue(FbUser::class.java)
-                        return@map User(fbUser?.name ?: "",
-                                fbUser?.email ?: "")
-                    } ?: emptyList()
-            user.postValue(data.first())
+            val name = snapshot?.child("name")?.value as? String ?: ""
+            val email = snapshot?.child("email")?.value as? String ?: ""
+            val fbUser = User(name, email)
+
+            user.postValue(fbUser)
         }
+
     }
 
-    private fun startListeningToUser() {
+    private fun getUserInfo() {
         if(userDatabaseRef == null) {
             return
         }
 
-        userDatabaseRef?.addValueEventListener(userEventListener)
+        userDatabaseRef?.addValueEventListener(userInfoEventListener)
     }
 
     val kids : MediatorLiveData<List<Kid>> = MediatorLiveData()
@@ -93,6 +89,15 @@ class DatabaseRepository {
     }
 
     fun stopListening() {
+        stopListeningToKids()
+        stopListeningToUserInfor()
+    }
+
+    private fun stopListeningToKids() {
         userDatabaseRef?.child("kids")?.removeEventListener(kidEventListener)
+    }
+
+    private fun stopListeningToUserInfor() {
+
     }
 }

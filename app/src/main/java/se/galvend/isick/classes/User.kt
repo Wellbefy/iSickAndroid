@@ -13,7 +13,7 @@ data class User(val name: String?, val email: String?)
 class UserViewModel(application: Application) : AndroidViewModel(application) {
     private val databaseRepository = DatabaseRepository()
 
-    val name: MediatorLiveData<User> = MediatorLiveData()
+    val user: MediatorLiveData<User> = databaseRepository.user
     val kids: MediatorLiveData<List<Kid>> = databaseRepository.kids
 
     fun signOut() {
