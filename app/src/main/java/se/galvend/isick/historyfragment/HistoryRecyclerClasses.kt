@@ -1,17 +1,21 @@
 package se.galvend.isick.historyfragment
 
+import android.app.usage.UsageEvents
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import se.galvend.isick.R
+import se.galvend.isick.classes.Event
 
 /**
  * Created by dennisgalven on 2018-02-13.
  */
 class HistoryAdapter: RecyclerView.Adapter<HistoryViewHolder>() {
-    override fun getItemCount(): Int = 2
+    var events : List<Event> = emptyList()
+
+    override fun getItemCount(): Int = events.count()
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): HistoryViewHolder {
         val view = LayoutInflater.from(parent?.context).inflate(R.layout.history_recycler_cell, parent, false)
@@ -19,9 +23,15 @@ class HistoryAdapter: RecyclerView.Adapter<HistoryViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: HistoryViewHolder?, position: Int) {
-        holder?.nameLabel?.text = "Alice Galvén"
-        holder?.dateLabel?.text = "28 feb. 2018 - VAB"
-        holder?.reportedLabel?.text = "Anmält till FK"
+        val event = events[position]
+        holder?.nameLabel?.text = event.name
+
+        when {
+            event.vab!! -> holder?.dateLabel?.text = "${event.date.toString()} - VAB"
+            else -> holder?.dateLabel?.text = "${event.date.toString()} - SJUK"
+        }
+
+        if(!event.reported!!) holder?.reportedLabel?.visibility = View.INVISIBLE
     }
 
 }

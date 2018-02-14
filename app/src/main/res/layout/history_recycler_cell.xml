@@ -44,7 +44,7 @@
         android:layout_marginBottom="2dp"
         android:layout_marginEnd="8dp"
         android:fontFamily="@font/raleway"
-        android:text="Anmält till FK"
+        android:text="@string/label_anmält_till_fk"
         android:textColor="@color/purple"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"

@@ -17,4 +17,5 @@
     <string name="hint_email">email</string>
     <string name="hint_password">lösenord</string>
     <string name="label_klar">Klar</string>
+    <string name="label_anmält_till_fk">Anmält till FK</string>
 </resources>

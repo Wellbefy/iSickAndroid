@@ -24,16 +24,18 @@ class EventDataBaseRepository {
     init {
         FirebaseAuth.getInstance().addAuthStateListener {
             if(it.currentUser != null) {
-                eventDataBaseReference = dataBase?.getReference(it.currentUser?.uid)?.child("history")
+                val uid = it.currentUser!!.uid
+                eventDataBaseReference = dataBase?.getReference("users")?.child(uid)?.child("history")
                 startListeningToEvents()
             } else {
                 eventDataBaseReference = null
             }
         }
     }
+
     val events : MediatorLiveData<List<Event>> = MediatorLiveData()
 
-    val eventListener = object : ValueEventListener {
+    private val eventListener = object : ValueEventListener {
         override fun onCancelled(error: DatabaseError?) {
             Log.d(TAG, error?.message)
         }
