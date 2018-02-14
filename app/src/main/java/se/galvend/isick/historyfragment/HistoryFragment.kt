@@ -41,6 +41,7 @@ class HistoryFragment : Fragment() {
                 workLabel.text = context.getString(R.string.string_workpercent, "%.1f".format(workPercent))
                 sickLabel.text = context.getString(R.string.string_sickpercent, "%.1f".format(sickPercent))
                 vabLabel.text = context.getString(R.string.string_vabpercent, "%.1f".format(vabPercent))
+
                 animateCircles(workProgress, workPercent)
                 animateCircles(sickProgress, sickPercent)
                 animateCircles(vabProgress, vabPercent)
