@@ -18,4 +18,9 @@
     <string name="hint_password">lösenord</string>
     <string name="label_klar">Klar</string>
     <string name="label_anmält_till_fk">Anmält till FK</string>
+    <string name="string_sjuk">%S - Sjuk</string>
+    <string name="string_vab">%S - VAB</string>
+    <string name="string_workpercent">Närvaro:\n%S%%</string>
+    <string name="string_sickpercent">Sjuk:\n%S%%</string>
+    <string name="string_vabpercent">VAB:\n%S%%</string>
 </resources>

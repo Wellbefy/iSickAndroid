@@ -41,7 +41,6 @@
         android:background="@drawable/circle_shape"
         android:indeterminate="false"
         android:max="100"
-        android:progress="69"
         android:progressDrawable="@drawable/circular_progress_bar"
         app:layout_constraintEnd_toStartOf="@+id/sickProgress"
         app:layout_constraintHorizontal_bias="0.5"
@@ -57,7 +56,6 @@
         android:background="@drawable/light_circle_shape"
         android:indeterminate="false"
         android:max="100"
-        android:progress="16"
         android:progressDrawable="@drawable/purple_circle_shape"
         app:layout_constraintEnd_toStartOf="@+id/vabProgress"
         app:layout_constraintHorizontal_bias="0.5"
@@ -73,7 +71,6 @@
         android:background="@drawable/light_circle_shape"
         android:indeterminate="false"
         android:max="100"
-        android:progress="15"
         android:progressDrawable="@drawable/purple_circle_shape"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -89,13 +86,13 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:fontFamily="@font/raleway"
-        android:text="VAB:\n15%"
         android:textAlignment="center"
         android:textColor="@color/common_google_signin_btn_text_dark_focused"
         app:layout_constraintBottom_toBottomOf="@+id/vabProgress"
         app:layout_constraintEnd_toEndOf="@+id/vabProgress"
         app:layout_constraintStart_toStartOf="@+id/vabProgress"
-        app:layout_constraintTop_toTopOf="@+id/vabProgress" />
+        app:layout_constraintTop_toTopOf="@+id/vabProgress"
+        tools:text="@string/string_vabpercent" />
 
     <TextView
         android:id="@+id/sickLabel"
@@ -106,13 +103,13 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:fontFamily="@font/raleway"
-        android:text="Sjuk:\n16%"
         android:textAlignment="center"
         android:textColor="@color/common_google_signin_btn_text_dark_focused"
         app:layout_constraintBottom_toBottomOf="@+id/sickProgress"
         app:layout_constraintEnd_toEndOf="@+id/sickProgress"
         app:layout_constraintStart_toStartOf="@+id/sickProgress"
-        app:layout_constraintTop_toTopOf="@+id/sickProgress" />
+        app:layout_constraintTop_toTopOf="@+id/sickProgress"
+        tools:text="@string/string_sickpercent" />
 
     <TextView
         android:id="@+id/workLabel"
@@ -123,13 +120,13 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:fontFamily="@font/raleway"
-        android:text="Närvaro:\n69%"
         android:textAlignment="center"
         android:textColor="@color/common_google_signin_btn_text_dark_focused"
         app:layout_constraintBottom_toBottomOf="@+id/workProgress"
         app:layout_constraintEnd_toEndOf="@+id/workProgress"
         app:layout_constraintStart_toStartOf="@+id/workProgress"
-        app:layout_constraintTop_toTopOf="@+id/workProgress" />
+        app:layout_constraintTop_toTopOf="@+id/workProgress"
+        tools:text="@string/string_workpercent" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/historyRecycler"

@@ -1,9 +1,7 @@
 package se.galvend.isick.classes
 
-import java.sql.Timestamp
+import android.util.Log
 import java.text.DateFormat
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import java.util.*
 
 /**
@@ -15,9 +13,22 @@ data class Event(val id: String?,
                  val date: Long?,
                  val vab: Boolean?,
                  val reported: Boolean?) {
+    companion object {
+        val TAG = "Event"
+    }
+
     fun displayDate() : String {
+        val date = Date(this.date!! * 1000)
+        val formatter = DateFormat.getDateInstance(DateFormat.DEFAULT)
+
+        return formatter.format(date)
+    }
+
+    fun getMonth() : Int {
+        val date = Date(date!! * 1000)
         val calendar = Calendar.getInstance()
-        val date = Date(this.date!!)
-        return ""
+        calendar.time = date
+        Log.d(TAG, calendar.get(Calendar.MONTH).toString())
+        return calendar.get(Calendar.MONTH)
     }
 }

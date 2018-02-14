@@ -1,6 +1,5 @@
 package se.galvend.isick.historyfragment
 
-import android.app.usage.UsageEvents
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -25,10 +24,12 @@ class HistoryAdapter: RecyclerView.Adapter<HistoryViewHolder>() {
     override fun onBindViewHolder(holder: HistoryViewHolder?, position: Int) {
         val event = events[position]
         holder?.nameLabel?.text = event.name
-
+        event.displayDate()
+        val sickText = holder?.itemView?.context?.getString(R.string.string_sjuk, event.displayDate())
+        val vabText = holder?.itemView?.context?.getString(R.string.string_vab, event.displayDate())
         when {
-            event.vab!! -> holder?.dateLabel?.text = "${event.date.toString()} - VAB"
-            else -> holder?.dateLabel?.text = "${event.date.toString()} - SJUK"
+            event.vab!! -> holder?.dateLabel?.text = sickText
+            else -> holder?.dateLabel?.text = vabText
         }
 
         if(!event.reported!!) holder?.reportedLabel?.visibility = View.INVISIBLE
