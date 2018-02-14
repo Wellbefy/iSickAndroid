@@ -9,7 +9,7 @@ import se.galvend.isick.classes.Event
 /**
  * Created by dennisgalven on 2018-02-14.
  */
-data class FbEvent(val date: Double? = 0.0,
+data class FbEvent(val date: Long? = 0L,
                    val name: String? = "",
                    val reported : Boolean? = false,
                    val vab : Boolean? = false)
@@ -46,7 +46,7 @@ class EventDataBaseRepository {
                         val fbEvent = it.getValue(FbEvent::class.java)
                         return@map Event(it.key,
                                 fbEvent?.name ?: "",
-                                fbEvent?.date ?: 0.0,
+                                fbEvent?.date ?: 0L,
                                 fbEvent?.vab ?: false,
                                 fbEvent?.reported ?: false)
                     } ?: emptyList()

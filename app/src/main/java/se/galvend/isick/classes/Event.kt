@@ -1,5 +1,9 @@
 package se.galvend.isick.classes
 
+import java.sql.Timestamp
+import java.text.DateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 /**
@@ -8,6 +12,12 @@ import java.util.*
 
 data class Event(val id: String?,
                  val name: String?,
-                 val date: Double?,
+                 val date: Long?,
                  val vab: Boolean?,
-                 val reported: Boolean?)
+                 val reported: Boolean?) {
+    fun displayDate() : String {
+        val calendar = Calendar.getInstance()
+        val date = Date(this.date!!)
+        return ""
+    }
+}
