@@ -10,12 +10,10 @@ import se.galvend.isick.classes.User
 /**
  * Created by dennisgalven on 2018-02-12.
  */
-data class FbKid(val email: String = "",
-                 val personnummer: String = "")
 
-class DatabaseRepository {
+class UserDataBaseRepository {
     companion object {
-        val TAG = "DatabaseRepository"
+        val TAG = "UserDataBaseRepository"
     }
 
     private var uid: String? = null
@@ -27,7 +25,7 @@ class DatabaseRepository {
             if(it.currentUser != null) {
                 uid = it.currentUser!!.uid
                 userDatabaseRef = databaseRef.child("users").child(uid)
-                startListeningToKids()
+
                 getUserInfo()
             } else {
                 uid = null
@@ -61,40 +59,8 @@ class DatabaseRepository {
         userDatabaseRef?.addValueEventListener(userInfoEventListener)
     }
 
-    val kids : MediatorLiveData<List<Kid>> = MediatorLiveData()
-
-    private val kidEventListener = object :ValueEventListener {
-        override fun onCancelled(error: DatabaseError?) {
-            //something went wrong
-            Log.d(TAG, error?.message)
-        }
-
-        override fun onDataChange(snapshot: DataSnapshot?) {
-            val data = snapshot?.children
-                    ?.map {
-                        val fbKid = it.getValue(FbKid::class.java)
-                        return@map Kid(it.key ?: "",
-                                fbKid?.personnummer ?: "",
-                                fbKid?.email ?: "")
-                    } ?: emptyList()
-            kids.postValue(data)
-        }
-    }
-
-    private fun startListeningToKids() {
-        if(userDatabaseRef == null) {
-            return
-        }
-        userDatabaseRef?.child("kids")?.addValueEventListener(kidEventListener)
-    }
-
     fun stopListening() {
-        stopListeningToKids()
         stopListeningToUserInfor()
-    }
-
-    private fun stopListeningToKids() {
-        userDatabaseRef?.child("kids")?.removeEventListener(kidEventListener)
     }
 
     private fun stopListeningToUserInfor() {
