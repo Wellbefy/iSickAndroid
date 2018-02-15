@@ -54,6 +54,14 @@ class EventDataBaseRepository {
         }
     }
 
+    fun removeEvent(id: String) {
+        if(eventDataBaseReference == null) return
+
+        eventDataBaseReference?.child(id)?.removeValue { error, _ ->
+            if(error != null) Log.d(TAG, error.message)
+        }
+    }
+
     private fun startListeningToEvents() {
         if (eventDataBaseReference == null) return
 

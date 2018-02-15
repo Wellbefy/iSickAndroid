@@ -12,7 +12,8 @@ data class Event(val id: String?,
                  val name: String?,
                  val date: Long?,
                  val vab: Boolean?,
-                 val reported: Boolean?) {
+                 val reported: Boolean?,
+                 var removed: Boolean = false) {
     companion object {
         val TAG = "Event"
     }

@@ -47,6 +47,7 @@
         android:text="@string/label_anmält_till_fk"
         android:textColor="@color/purple"
         android:textSize="12sp"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 </android.support.constraint.ConstraintLayout>

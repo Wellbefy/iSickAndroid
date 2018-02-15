@@ -3,11 +3,9 @@ package se.galvend.isick.classes
 import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.MediatorLiveData
-import android.util.Log
 import se.galvend.isick.firebase.EventDataBaseRepository
 import se.galvend.isick.firebase.KidDataBaseRepository
 import se.galvend.isick.firebase.UserDataBaseRepository
-import java.text.DecimalFormat
 import java.util.*
 
 /**
@@ -31,6 +29,12 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
         userDataBaseRepository.stopListening()
         eventDataBaseRepository.stopListening()
         kidDataBaseRepository.stopListening()
+    }
+
+    fun removeEvent(id: String?) {
+        if(id == null) return
+
+        eventDataBaseRepository.removeEvent(id)
     }
 
     fun sortDates(): List<Event> {

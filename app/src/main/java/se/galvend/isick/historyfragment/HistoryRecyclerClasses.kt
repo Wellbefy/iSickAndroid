@@ -1,25 +1,39 @@
 package se.galvend.isick.historyfragment
 
+import android.arch.lifecycle.ViewModel
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.drawable.ColorDrawable
+import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import se.galvend.isick.R
 import se.galvend.isick.classes.Event
+import se.galvend.isick.classes.UserViewModel
 
 /**
  * Created by dennisgalven on 2018-02-13.
  */
 class HistoryAdapter: RecyclerView.Adapter<HistoryViewHolder>() {
+    companion object {
+        val TAG = "HistoryAdapter"
+    }
     var events : List<Event> = emptyList()
 
-    override fun getItemCount(): Int = events.count()
+    override fun getItemCount(): Int {
+        var removed = 0
+        events.forEach {
+            if(it.removed) removed += 1
+        }
+
+        return events.count() - removed
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): HistoryViewHolder {
         val view = LayoutInflater.from(parent?.context).inflate(R.layout.history_recycler_cell, parent, false)
@@ -28,16 +42,22 @@ class HistoryAdapter: RecyclerView.Adapter<HistoryViewHolder>() {
 
     override fun onBindViewHolder(holder: HistoryViewHolder?, position: Int) {
         val event = events[position]
+
+        Log.d(TAG, event.toString())
+
         holder?.nameLabel?.text = event.name
         event.displayDate()
         val sickText = holder?.itemView?.context?.getString(R.string.string_sjuk, event.displayDate())
         val vabText = holder?.itemView?.context?.getString(R.string.string_vab, event.displayDate())
         when {
-            event.vab!! -> holder?.dateLabel?.text = sickText
-            else -> holder?.dateLabel?.text = vabText
+            event.vab!! -> holder?.dateLabel?.text = vabText
+            else -> holder?.dateLabel?.text = sickText
         }
 
-        if(!event.reported!!) holder?.reportedLabel?.visibility = View.INVISIBLE
+        when {
+            event.reported!! -> holder?.reportedLabel?.visibility = View.VISIBLE
+            else -> holder?.reportedLabel?.visibility = View.INVISIBLE
+        }
     }
 
 }
@@ -50,7 +70,11 @@ class HistoryViewHolder(view: View): RecyclerView.ViewHolder(view) {
 
 class ItemTouch {
 
-    fun createTouchHelper(context: Context, recyclerView: RecyclerView) {
+    companion object {
+        val TAG = "ItemTouch"
+    }
+
+    fun createTouchHelper(context: Context, recyclerView: RecyclerView, viewModel: ViewModel) {
         val deleteIcon = ContextCompat.getDrawable(context, R.drawable.ic_delete_forever_black_24dp)
         val deleteColor = ColorDrawable(ContextCompat.getColor(context, R.color.purple))
         val iconMargin = 8
@@ -64,6 +88,11 @@ class ItemTouch {
                 val index = viewHolder?.adapterPosition ?: -1
                 if(index == -1) return
 
+//                val event = (recyclerView.adapter as HistoryAdapter).events[index]
+//                (viewModel as UserViewModel).removeEvent(event.id!!)
+                (viewModel as UserViewModel).events.value!![index].removed = true
+                presentSnackBar(recyclerView, index, viewModel)
+                recyclerView.adapter.notifyItemRemoved(index)
             }
 
             override fun onChildDraw(c: Canvas?, recyclerView: RecyclerView?, viewHolder: RecyclerView.ViewHolder?, dX: Float, dY: Float, actionState: Int, isCurrentlyActive: Boolean) {
@@ -87,5 +116,29 @@ class ItemTouch {
             }
         })
         itemTouchHelper.attachToRecyclerView(recyclerView)
+    }
+
+    fun presentSnackBar(recyclerView: RecyclerView, position: Int, viewModel: ViewModel) {
+        val snackBar = Snackbar.make(recyclerView, "", 5000)
+        val snackViewModel = viewModel as UserViewModel
+        val snackEvent = snackViewModel.events.value!![position]
+
+        snackBar.setAction("ÅNGRA?", {})
+
+        snackBar.addCallback(object : Snackbar.Callback() {
+            override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                super.onDismissed(transientBottomBar, event)
+                when(event) {
+                    DISMISS_EVENT_ACTION -> {
+                        snackEvent.removed = false
+                        recyclerView.adapter.notifyDataSetChanged()
+                    }
+                    DISMISS_EVENT_TIMEOUT -> {
+                        viewModel.removeEvent(snackEvent.id)
+                    }
+                }
+            }
+        })
+        snackBar.show()
     }
 }
