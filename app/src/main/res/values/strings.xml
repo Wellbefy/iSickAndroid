@@ -23,4 +23,19 @@
     <string name="string_workpercent">Närvaro:\n%S%%</string>
     <string name="string_sickpercent">Sjuk:\n%S%%</string>
     <string name="string_vabpercent">VAB:\n%S%%</string>
+
+    <string-array name="months">
+        <item>Januari</item>
+        <item>Februari</item>
+        <item>Mars</item>
+        <item>April</item>
+        <item>Maj</item>
+        <item>Juni</item>
+        <item>Juli</item>
+        <item>Augusti</item>
+        <item>September</item>
+        <item>Oktober</item>
+        <item>November</item>
+        <item>December</item>
+    </string-array>
 </resources>

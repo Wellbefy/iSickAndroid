@@ -16,6 +16,7 @@ import kotlinx.android.synthetic.main.fragment_history.*
 
 import se.galvend.isick.R
 import se.galvend.isick.classes.UserViewModel
+import java.util.*
 
 
 /**
@@ -29,7 +30,8 @@ class HistoryFragment : Fragment() {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        monthLabel.text = "Februari 2018"
+        monthLabel.text = getYearAndMonth()
+
         historyRecycler.adapter = HistoryAdapter()
         historyRecycler.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
 
@@ -47,12 +49,25 @@ class HistoryFragment : Fragment() {
                 animateCircles(vabProgress, vabPercent)
             }
         })
+
+        val itemTouch = ItemTouch()
+        itemTouch.createTouchHelper(context, historyRecycler)
     }
 
     private fun animateCircles(progressBar: ProgressBar, value: Float) {
-        val workAnimator = ObjectAnimator.ofInt(progressBar, "progress", progressBar.progress, value.toInt())
-        workAnimator.duration = 2000
+        val workAnimator = ObjectAnimator.ofInt(progressBar, "progress", progressBar.progress, value.toInt()*1000)
+        workAnimator.duration = 1000
         workAnimator.interpolator = LinearInterpolator()
         workAnimator.start()
+    }
+
+    private fun getYearAndMonth(): String {
+        val date = Date()
+        val calendar = Calendar.getInstance()
+        calendar.time = date
+        val month = calendar.get(Calendar.MONTH)
+        val year = calendar.get(Calendar.YEAR)
+        val months = resources.getStringArray(R.array.months)
+        return "${months[month]} $year"
     }
 }// Required empty public constructor
