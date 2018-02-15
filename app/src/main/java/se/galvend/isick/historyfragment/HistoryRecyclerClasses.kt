@@ -128,6 +128,7 @@ class ItemTouch {
         snackBar.addCallback(object : Snackbar.Callback() {
             override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
                 super.onDismissed(transientBottomBar, event)
+
                 when(event) {
                     DISMISS_EVENT_ACTION -> {
                         snackEvent.removed = false
