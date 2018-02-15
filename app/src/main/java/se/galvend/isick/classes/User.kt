@@ -4,6 +4,7 @@ import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.MediatorLiveData
 import se.galvend.isick.firebase.EventDataBaseRepository
+import se.galvend.isick.firebase.FbEvent
 import se.galvend.isick.firebase.KidDataBaseRepository
 import se.galvend.isick.firebase.UserDataBaseRepository
 import java.util.*
@@ -29,6 +30,10 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
         userDataBaseRepository.stopListening()
         eventDataBaseRepository.stopListening()
         kidDataBaseRepository.stopListening()
+    }
+
+    fun uploadEvent(event: FbEvent) {
+        eventDataBaseRepository.uploadEvent(event)
     }
 
     fun removeEvent(id: String?) {

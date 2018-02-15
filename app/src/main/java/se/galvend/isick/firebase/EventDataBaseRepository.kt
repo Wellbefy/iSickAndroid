@@ -54,6 +54,12 @@ class EventDataBaseRepository {
         }
     }
 
+    fun uploadEvent(event: FbEvent) {
+        if(eventDataBaseReference == null) return
+
+        eventDataBaseReference?.push()?.setValue(event)
+    }
+
     fun removeEvent(id: String) {
         if(eventDataBaseReference == null) return
 

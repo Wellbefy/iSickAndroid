@@ -3,6 +3,7 @@ package se.galvend.isick.reportfragment
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
+import android.nfc.Tag
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -14,7 +15,11 @@ import kotlinx.android.synthetic.main.activity_login_register.*
 import kotlinx.android.synthetic.main.fragment_report.*
 
 import se.galvend.isick.R
+import se.galvend.isick.classes.Event
 import se.galvend.isick.classes.UserViewModel
+import se.galvend.isick.firebase.FbEvent
+import java.sql.Timestamp
+import java.util.*
 
 class ReportFragment : Fragment() {
     companion object {
@@ -62,7 +67,9 @@ class ReportFragment : Fragment() {
 
         sendButton.setOnClickListener {
             (kidRecycler.adapter as KidAdapter).kids.forEach {
-                Log.d(TAG, "${it.name}: ${it.isSick}")
+                val seconds = System.currentTimeMillis()/1000
+                val event = FbEvent(seconds, "Sandra Bengtsson", true, true)
+                viewModel.uploadEvent(event)
             }
         }
     }

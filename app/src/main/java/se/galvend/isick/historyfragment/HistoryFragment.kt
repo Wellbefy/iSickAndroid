@@ -2,14 +2,12 @@ package se.galvend.isick.historyfragment
 
 
 import android.animation.ObjectAnimator
+import android.app.Activity
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.os.CountDownTimer
-import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -48,9 +46,6 @@ class HistoryFragment : Fragment() {
             (historyRecycler.adapter as HistoryAdapter).events = viewModel.sortDates()
             historyRecycler.adapter.notifyDataSetChanged()
             viewModel.getCounts { workPercent, sickPercent, vabPercent ->
-//                workLabel.text = context.getString(R.string.string_workpercent, "%.1f".format(workPercent))
-//                sickLabel.text = context.getString(R.string.string_sickpercent, "%.1f".format(sickPercent))
-//                vabLabel.text = context.getString(R.string.string_vabpercent, "%.1f".format(vabPercent))
 
                 animateLabels(workPercent, workLabel)
                 animateLabels(sickPercent, sickLabel)
@@ -68,10 +63,12 @@ class HistoryFragment : Fragment() {
     }
 
     private fun animateCircles(progressBar: ProgressBar, value: Float) {
-        val workAnimator = ObjectAnimator.ofInt(progressBar, "progress", progressBar.progress, value.toInt()*1000)
+        val workAnimator = ObjectAnimator.ofInt(progressBar, "progress", 0, value.toInt()*1000)
         workAnimator.duration = 1000
         workAnimator.interpolator = LinearInterpolator()
-        workAnimator.start()
+        activity.runOnUiThread {
+            workAnimator.start()
+        }
     }
 
     private fun animateLabels(value: Float, label: TextView) {

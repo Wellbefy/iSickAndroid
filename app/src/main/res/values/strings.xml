@@ -23,6 +23,9 @@
     <string name="string_workpercent">Närvaro:\n%S%%</string>
     <string name="string_sickpercent">Sjuk:\n%S%%</string>
     <string name="string_vabpercent">VAB:\n%S%%</string>
+    <string name="label_sign_out">Logga ut</string>
+    <string name="label_email_till_sjukansvarig">email till sjukansvarig:</string>
+    <string name="label_barn">barn:</string>
 
     <string-array name="months">
         <item>Januari</item>
