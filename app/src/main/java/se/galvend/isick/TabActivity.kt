@@ -1,5 +1,6 @@
 package se.galvend.isick
 
+import android.app.Application
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView

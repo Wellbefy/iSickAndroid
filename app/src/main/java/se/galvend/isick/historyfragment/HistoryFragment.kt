@@ -92,7 +92,7 @@ class HistoryFragment : Fragment() {
 
     private fun upDateLabelTexts(value: Float, label: TextView) {
         activity.runOnUiThread {
-            when(label.id) {
+            when (label.id) {
                 R.id.workLabel -> label.text = context.getString(R.string.string_workpercent, "%.1f".format(value))
                 R.id.sickLabel -> label.text = context.getString(R.string.string_sickpercent, "%.1f".format(value))
                 R.id.vabLabel -> label.text = context.getString(R.string.string_vabpercent, "%.1f".format(value))
