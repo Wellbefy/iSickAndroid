@@ -26,6 +26,9 @@
     <string name="label_sign_out">Logga ut</string>
     <string name="label_email_till_sjukansvarig">email till sjukansvarig:</string>
     <string name="label_barn">barn:</string>
+    <string name="label_add_kid">Lägg till barn</string>
+    <string name="label_pushnotifikation">pushnotifikation:</string>
+    <string name="label_påminnelse">Påminnelse klockan %S dagen efter</string>
 
     <string-array name="months">
         <item>Januari</item>

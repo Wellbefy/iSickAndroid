@@ -6,6 +6,8 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.text.InputType
 import android.util.Log
 import android.view.*
@@ -42,6 +44,15 @@ class SettingsFragment : Fragment() {
         settingsNameTF.setRawInputType(InputType.TYPE_NULL)
         settingsEmailTF.setRawInputType(InputType.TYPE_NULL)
 
+        editKidRecycler.adapter = EditKidRecyclerAdapter()
+        editKidRecycler.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+
+
+        viewModel.kids.observe(this, Observer {
+            (editKidRecycler.adapter as EditKidRecyclerAdapter).kids = it ?: emptyList()
+            editKidRecycler.adapter.notifyDataSetChanged()
+        })
+
         editNameButton.setOnClickListener {
             Log.d(TAG, "edit name")
             focusTextView(settingsNameTF, true)
@@ -50,6 +61,15 @@ class SettingsFragment : Fragment() {
         editMailButton.setOnClickListener {
             Log.d(TAG, "edit email")
             focusTextView(settingsEmailTF, false)
+        }
+
+        addKidButton.setOnClickListener {
+            Log.d(TAG, "add kid")
+        }
+
+        editReminderLabel.text = getString(R.string.label_påminnelse, "07:00")
+        editPushButton.setOnClickListener {
+            Log.d(TAG, "edit push")
         }
 
         signOutButton.setOnClickListener {
