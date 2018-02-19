@@ -11,12 +11,14 @@ import java.util.*
 
 /**
  * Created by dennisgalven on 2018-02-12.
+ * User View Model
  */
+
 data class User(val name: String?, val email: String?)
 
 class UserViewModel(application: Application) : AndroidViewModel(application) {
     companion object {
-        val TAG = "UserViewModel"
+        const val TAG = "UserViewModel"
     }
     private val userDataBaseRepository = UserDataBaseRepository()
     private val kidDataBaseRepository = KidDataBaseRepository()
@@ -30,6 +32,14 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
         userDataBaseRepository.stopListening()
         eventDataBaseRepository.stopListening()
         kidDataBaseRepository.stopListening()
+    }
+
+    fun changeUserName(name: String) {
+        userDataBaseRepository.changeUserName(name)
+    }
+
+    fun changeUserEmail(email: String) {
+        userDataBaseRepository.changeUserEmail(email)
     }
 
     fun uploadEvent(event: FbEvent) {

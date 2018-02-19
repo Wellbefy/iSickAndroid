@@ -59,11 +59,26 @@ class UserDataBaseRepository {
         userDatabaseRef?.addValueEventListener(userInfoEventListener)
     }
 
-    fun stopListening() {
-        stopListeningToUserInfor()
+    fun changeUserName(name: String) {
+        if(userDatabaseRef == null) return
+
+
+        userDatabaseRef?.child("name")?.setValue(name)
     }
 
-    private fun stopListeningToUserInfor() {
+    fun changeUserEmail(email: String) {
+        if(userDatabaseRef == null) return
 
+        userDatabaseRef?.child("email")?.setValue(email)
+    }
+
+    fun stopListening() {
+        stopListeningToUserInfo()
+    }
+
+    private fun stopListeningToUserInfo() {
+        if (userDatabaseRef == null) return
+
+        userDatabaseRef?.removeEventListener(userInfoEventListener)
     }
 }

@@ -7,7 +7,7 @@ import com.google.firebase.auth.FirebaseAuth
  */
 
 class Auth {
-    val instance = FirebaseAuth.getInstance()
+    private val instance = FirebaseAuth.getInstance()
 
     fun login(email: String, password: String, callback: (Exception?) -> Unit) {
         instance.signInWithEmailAndPassword(email, password).addOnCompleteListener {

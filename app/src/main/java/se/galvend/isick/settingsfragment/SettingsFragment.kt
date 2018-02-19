@@ -10,10 +10,10 @@ import android.support.v7.widget.LinearLayoutManager
 import android.text.InputType
 import android.util.Log
 import android.view.*
+import android.view.inputmethod.EditorInfo
 import kotlinx.android.synthetic.main.fragment_settings.*
 import se.galvend.isick.R
 import se.galvend.isick.classes.UserViewModel
-import se.galvend.isick.firebase.Auth
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 
@@ -33,63 +33,100 @@ class SettingsFragment : Fragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        //User view model
         val viewModel = ViewModelProviders.of(activity).get(UserViewModel::class.java)
 
+        //View model observes user name and user email
         viewModel.user.observe(this, Observer {
             settingsNameTF.setText(it?.name ?: "")
             settingsEmailTF.setText(it?.email ?: "")
         })
 
-        settingsNameTF.setRawInputType(InputType.TYPE_NULL)
-        settingsEmailTF.setRawInputType(InputType.TYPE_NULL)
+        //Sets edit texts input type to null
+        settingsNameTF.inputType = InputType.TYPE_NULL
+        settingsEmailTF.inputType = InputType.TYPE_NULL
 
+        //Recycler view adapter and layout manager
         editKidRecycler.adapter = EditKidRecyclerAdapter()
         editKidRecycler.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
 
-
+        //View model observes users [kids]
         viewModel.kids.observe(this, Observer {
             (editKidRecycler.adapter as EditKidRecyclerAdapter).kids = it ?: emptyList()
             editKidRecycler.adapter.notifyDataSetChanged()
         })
 
+        //Edit name button listener
         editNameButton.setOnClickListener {
             Log.d(TAG, "edit name")
-            focusTextView(settingsNameTF, true)
+            focusTextView(settingsNameTF, false)
         }
 
+        //Edit email button listener
         editMailButton.setOnClickListener {
             Log.d(TAG, "edit email")
-            focusTextView(settingsEmailTF, false)
+            focusTextView(settingsEmailTF, true)
         }
 
+        //Add kid button listener
         addKidButton.setOnClickListener {
             Log.d(TAG, "add kid")
         }
 
+        //Edit reminder button listener
         editReminderLabel.text = getString(R.string.label_påminnelse, "07:00")
         editPushButton.setOnClickListener {
             Log.d(TAG, "edit push")
         }
 
+        //Sign out button listener
         signOutButton.setOnClickListener {
-            val auth = Auth()
-            auth.signOut()
+            Log.d(TAG, "Sign out")
+        }
+
+        //Return key listener for edit name Edit text
+        settingsNameTF.setOnEditorActionListener { _, action, _ ->
+            if(action == EditorInfo.IME_ACTION_DONE) {
+                focusTextView(settingsNameTF, false)
+                viewModel.changeUserName(settingsNameTF.text.toString())
+                true
+            } else {
+                false
+            }
+        }
+
+        //Return key listener for edit email Edit text
+        settingsEmailTF.setOnEditorActionListener { _, action, _ ->
+            if(action == EditorInfo.IME_ACTION_DONE) {
+                if(correctEmail()) {
+                    focusTextView(settingsEmailTF, true)
+                    viewModel.changeUserEmail(settingsEmailTF.text.toString())
+                }
+                true
+            } else {
+                false
+            }
         }
     }
 
-    private fun focusTextView(editText: EditText, text: Boolean) {
+    //Checks if email adress is correct
+    private fun correctEmail(): Boolean {
+        return settingsEmailTF.text.contains("@") && settingsEmailTF.text.contains(".")
+    }
+
+    //Adds/removes focus from edit texts and hides/shows keyboard
+    private fun focusTextView(editText: EditText, email: Boolean) {
         val imm = activity.getSystemService(Application.INPUT_METHOD_SERVICE) as InputMethodManager
         if(editText.inputType != InputType.TYPE_NULL) {
             editText.clearFocus()
-            editText.setRawInputType(InputType.TYPE_NULL)
+            editText.inputType = InputType.TYPE_NULL
             imm.hideSoftInputFromWindow(view?.windowToken, 0)
         } else {
             editText.requestFocus()
-
-            if (text) {
-                editText.setRawInputType(InputType.TYPE_CLASS_TEXT)
+            if(email){
+                editText.inputType = InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
             } else {
-                editText.setRawInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS)
+                editText.inputType = InputType.TYPE_TEXT_VARIATION_PERSON_NAME
             }
 
             editText.setSelection(editText.text.count())
