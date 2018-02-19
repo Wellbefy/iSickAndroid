@@ -4,6 +4,7 @@ package se.galvend.isick.settingsfragment
 import android.app.Application
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -16,6 +17,7 @@ import se.galvend.isick.R
 import se.galvend.isick.classes.UserViewModel
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import se.galvend.isick.EditAddKid
 
 
 /**
@@ -70,7 +72,8 @@ class SettingsFragment : Fragment() {
 
         //Add kid button listener
         addKidButton.setOnClickListener {
-            Log.d(TAG, "add kid")
+            val intent = Intent(context, EditAddKid::class.java)
+            startActivity(intent)
         }
 
         //Edit reminder button listener
@@ -109,7 +112,7 @@ class SettingsFragment : Fragment() {
         }
     }
 
-    //Checks if email adress is correct
+    //Checks if email address is correct
     private fun correctEmail(): Boolean {
         return settingsEmailTF.text.contains("@") && settingsEmailTF.text.contains(".")
     }
@@ -133,5 +136,4 @@ class SettingsFragment : Fragment() {
             imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY)
         }
     }
-
 }// Required empty public constructor

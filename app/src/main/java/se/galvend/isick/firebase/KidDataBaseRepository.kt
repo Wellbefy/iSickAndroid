@@ -14,6 +14,9 @@ data class FbKid(val email: String = "",
                  val personnummer: String = "")
 
 class KidDataBaseRepository {
+    companion object {
+        const val TAG = "KidDataBaseRepository"
+    }
     private var kidDataBaseRef: DatabaseReference? = null
     private val dataBase = FirebaseDatabase.getInstance()
 
@@ -43,6 +46,7 @@ class KidDataBaseRepository {
                                 fbKid?.personnummer ?: "",
                                 fbKid?.email ?: "")
                     } ?: emptyList()
+            Log.d(TAG, data.toString())
             kids.postValue(data)
         }
     }

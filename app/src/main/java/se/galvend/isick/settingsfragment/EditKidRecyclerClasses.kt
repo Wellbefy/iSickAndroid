@@ -1,6 +1,7 @@
 package se.galvend.isick.settingsfragment
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
@@ -8,11 +9,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
+import se.galvend.isick.EditAddKid
 import se.galvend.isick.R
 import se.galvend.isick.classes.Kid
 
 /**
  * Created by dennisgalven on 2018-02-16.
+ * Recycler view adapter and view holder for settings fragment
  */
 class EditKidRecyclerAdapter: RecyclerView.Adapter<EditKidViewHolder>() {
     companion object {
@@ -34,6 +37,10 @@ class EditKidRecyclerAdapter: RecyclerView.Adapter<EditKidViewHolder>() {
         holder?.emailLabel?.text = kid.email
         holder?.editButton?.setOnClickListener {
             Log.d(TAG, kid.name)
+            val context = holder.itemView.context
+            val intent = Intent(context, EditAddKid::class.java)
+            intent.putExtra("name", kid.name ?: "")
+            context.startActivity(intent)
         }
     }
 
