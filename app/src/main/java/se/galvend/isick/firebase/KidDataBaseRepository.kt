@@ -57,6 +57,18 @@ class KidDataBaseRepository {
         kidDataBaseRef?.addValueEventListener(kidEventListener)
     }
 
+    fun editAddKid(kid: Kid) {
+        if(kidDataBaseRef == null) return
+        val fbKid = FbKid(kid.email ?: "", kid.personNumber ?: "")
+        kidDataBaseRef?.child(kid.name)?.setValue(fbKid)
+    }
+
+    fun removeKid(name: String) {
+        if(kidDataBaseRef == null) return
+
+        kidDataBaseRef?.child(name)?.removeValue()
+    }
+
     fun stopListening() {
         kidDataBaseRef?.removeEventListener(kidEventListener)
     }

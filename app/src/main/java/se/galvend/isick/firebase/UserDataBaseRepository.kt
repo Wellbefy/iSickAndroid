@@ -13,7 +13,7 @@ import se.galvend.isick.classes.User
 
 class UserDataBaseRepository {
     companion object {
-        val TAG = "UserDataBaseRepository"
+        const val TAG = "UserDataBaseRepository"
     }
 
     private var uid: String? = null

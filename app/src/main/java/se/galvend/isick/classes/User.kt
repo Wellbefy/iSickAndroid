@@ -3,10 +3,7 @@ package se.galvend.isick.classes
 import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.MediatorLiveData
-import se.galvend.isick.firebase.EventDataBaseRepository
-import se.galvend.isick.firebase.FbEvent
-import se.galvend.isick.firebase.KidDataBaseRepository
-import se.galvend.isick.firebase.UserDataBaseRepository
+import se.galvend.isick.firebase.*
 import java.util.*
 
 /**
@@ -23,6 +20,7 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
     private val userDataBaseRepository = UserDataBaseRepository()
     private val kidDataBaseRepository = KidDataBaseRepository()
     private val eventDataBaseRepository = EventDataBaseRepository()
+    private val auth = Auth()
 
     val user: MediatorLiveData<User> = userDataBaseRepository.user
     val kids: MediatorLiveData<List<Kid>> = kidDataBaseRepository.kids
@@ -32,6 +30,7 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
         userDataBaseRepository.stopListening()
         eventDataBaseRepository.stopListening()
         kidDataBaseRepository.stopListening()
+        auth.signOut()
     }
 
     fun changeUserName(name: String) {
@@ -87,5 +86,20 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
         val vabPercent = (vabCount/dayCount) * 100
 
         callback(workPercent, sickPercent, vabPercent)
+    }
+
+    fun editAddKid(kid: Kid) {
+        kidDataBaseRepository.editAddKid(kid)
+    }
+
+    fun removeKid(name: String) {
+        kidDataBaseRepository.removeKid(name)
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        userDataBaseRepository.stopListening()
+        eventDataBaseRepository.stopListening()
+        kidDataBaseRepository.stopListening()
     }
 }
