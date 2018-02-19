@@ -3,6 +3,7 @@ package se.galvend.isick.settingsfragment
 
 import android.app.Application
 import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
@@ -18,6 +19,7 @@ import se.galvend.isick.classes.UserViewModel
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import se.galvend.isick.EditAddKid
+import se.galvend.isick.classes.User
 
 
 /**
@@ -28,6 +30,8 @@ class SettingsFragment : Fragment() {
         const val TAG = "SettingsFragment"
     }
 
+    var viewModel : ViewModel? = null
+
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater!!.inflate(R.layout.fragment_settings, container, false)
     }
@@ -36,10 +40,10 @@ class SettingsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         //User view model
-        val viewModel = ViewModelProviders.of(activity).get(UserViewModel::class.java)
+        viewModel = ViewModelProviders.of(activity).get(UserViewModel::class.java)
 
         //View model observes user name and user email
-        viewModel.user.observe(this, Observer {
+        (viewModel as UserViewModel).user.observe(this, Observer {
             settingsNameTF.setText(it?.name ?: "")
             settingsEmailTF.setText(it?.email ?: "")
         })
@@ -53,7 +57,7 @@ class SettingsFragment : Fragment() {
         editKidRecycler.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
 
         //View model observes users [kids]
-        viewModel.kids.observe(this, Observer {
+        (viewModel as UserViewModel).kids.observe(this, Observer {
             (editKidRecycler.adapter as EditKidRecyclerAdapter).kids = it ?: emptyList()
             editKidRecycler.adapter.notifyDataSetChanged()
         })
@@ -91,7 +95,7 @@ class SettingsFragment : Fragment() {
         settingsNameTF.setOnEditorActionListener { _, action, _ ->
             if(action == EditorInfo.IME_ACTION_DONE) {
                 focusTextView(settingsNameTF, false)
-                viewModel.changeUserName(settingsNameTF.text.toString())
+                (viewModel as UserViewModel).changeUserName(settingsNameTF.text.toString())
                 true
             } else {
                 false
@@ -103,7 +107,7 @@ class SettingsFragment : Fragment() {
             if(action == EditorInfo.IME_ACTION_DONE) {
                 if(correctEmail()) {
                     focusTextView(settingsEmailTF, true)
-                    viewModel.changeUserEmail(settingsEmailTF.text.toString())
+                    (viewModel as UserViewModel).changeUserEmail(settingsEmailTF.text.toString())
                 }
                 true
             } else {
@@ -135,5 +139,11 @@ class SettingsFragment : Fragment() {
             editText.setSelection(editText.text.count())
             imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY)
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        (viewModel as UserViewModel).kids.removeObservers(this)
+        (viewModel as UserViewModel).user.removeObservers(this)
     }
 }// Required empty public constructor

@@ -3,6 +3,7 @@ package se.galvend.isick.classes
 import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.MediatorLiveData
+import android.util.Log
 import se.galvend.isick.firebase.*
 import java.util.*
 

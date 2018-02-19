@@ -4,6 +4,7 @@ package se.galvend.isick.historyfragment
 import android.animation.ObjectAnimator
 import android.app.Activity
 import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -30,6 +31,8 @@ class HistoryFragment : Fragment() {
         val TAG = "HistroyFragment"
     }
 
+    var viewModel : ViewModel? = null
+
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater!!.inflate(R.layout.fragment_history, container, false)
     }
@@ -41,11 +44,11 @@ class HistoryFragment : Fragment() {
         historyRecycler.adapter = HistoryAdapter()
         historyRecycler.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
 
-        val viewModel = ViewModelProviders.of(activity).get(UserViewModel::class.java)
-        viewModel.events.observe(this, Observer {
-            (historyRecycler.adapter as HistoryAdapter).events = viewModel.sortDates()
+        viewModel = ViewModelProviders.of(activity).get(UserViewModel::class.java)
+        (viewModel as UserViewModel).events.observe(this, Observer {
+            (historyRecycler.adapter as HistoryAdapter).events = (viewModel as UserViewModel).sortDates()
             historyRecycler.adapter.notifyDataSetChanged()
-            viewModel.getCounts { workPercent, sickPercent, vabPercent ->
+            (viewModel as UserViewModel).getCounts { workPercent, sickPercent, vabPercent ->
 
                 animateLabels(workPercent, workLabel)
                 animateLabels(sickPercent, sickLabel)
@@ -58,7 +61,7 @@ class HistoryFragment : Fragment() {
         })
 
         val itemTouch = ItemTouch()
-        itemTouch.createTouchHelper(context, historyRecycler, viewModel)
+        itemTouch.createTouchHelper(context, historyRecycler, (viewModel as UserViewModel))
 
     }
 
@@ -108,5 +111,10 @@ class HistoryFragment : Fragment() {
         val year = calendar.get(Calendar.YEAR)
         val months = resources.getStringArray(R.array.months)
         return "${months[month]} $year"
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        (viewModel as UserViewModel).events.removeObservers(this)
     }
 }// Required empty public constructor
