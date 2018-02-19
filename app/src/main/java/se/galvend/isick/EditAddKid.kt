@@ -4,16 +4,15 @@ import android.annotation.SuppressLint
 import android.app.Application
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
-import android.content.Context
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.AttributeSet
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import kotlinx.android.synthetic.main.activity_edit_add_kid.*
-import kotlinx.android.synthetic.main.activity_tab.*
+import se.galvend.isick.classes.CheckPersonNumber
 import se.galvend.isick.classes.Kid
 import se.galvend.isick.classes.UserViewModel
 
@@ -45,11 +44,10 @@ class EditAddKid : AppCompatActivity() {
             })
         }
 
-        kidNameTF.setSelection(kidNameTF.text.count())
-
         backFromEditKidButton.setOnClickListener {
             hideKeyboard()
             finish()
+            kidNameTF.setSelection(kidNameTF.text.count())
         }
 
         deleteKidButton.setOnClickListener {
@@ -60,26 +58,32 @@ class EditAddKid : AppCompatActivity() {
 
         doneEditKidButton.setOnClickListener {
             hideKeyboard()
-            val name = kidNameTF.text.toString()
+            val kidName = kidNameTF.text.toString()
             val email = kidEmailTF.text.toString()
             val personNumber = kidPersonNummerTF.text.toString()
 
-            val kid = Kid(name = name, email = email, personNumber = personNumber)
+            val kid = Kid(name = kidName, email = email, personNumber = personNumber)
 
             viewModel.editAddKid(kid)
             finish()
         }
 
+        val checkPersonNumber = CheckPersonNumber()
+
         kidPersonNummerTF.addTextChangedListener(object: TextWatcher {
             var inserted = false
             @SuppressLint("SetTextI18n")
             override fun afterTextChanged(p0: Editable?) {
+                //inserts "-" after six't number
                 if(kidPersonNummerTF.text.count()==6 && !inserted) {
                     kidPersonNummerTF.setText("${kidPersonNummerTF.text}-")
                     inserted = true
                     kidPersonNummerTF.setSelection(kidPersonNummerTF.text.count())
                 }
+                //reverts inserted to false so user can delete characters
                 if(kidPersonNummerTF.text.count()<6) inserted = false
+
+                Log.d(TAG, checkPersonNumber.checkNumber(kidPersonNummerTF.text.toString()).toString())
             }
 
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
