@@ -1,24 +1,26 @@
 package se.galvend.isick.sendactivity
 
+import android.annotation.SuppressLint
 import android.arch.lifecycle.ViewModel
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.PagerSnapHelper
-import android.util.Log
 import kotlinx.android.synthetic.main.activity_send.*
 import se.galvend.isick.R
+import se.galvend.isick.classes.MailAndMessage
+
 class SendActivity : AppCompatActivity() {
 
     companion object {
         const val TAG = "SendActivity"
         const val BUNDLE = "BUNDLE"
-        const val MESSAGES = "MESSAGES"
         const val VAB = "VAB"
     }
 
     private var viewModel: ViewModel? = null
 
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_send)
@@ -30,10 +32,19 @@ class SendActivity : AppCompatActivity() {
         val pager = PagerSnapHelper()
         pager.attachToRecyclerView(sendRecycler)
 
-        val bundle = intent.getBundleExtra(BUNDLE) ?: Bundle()
-        (sendRecycler.adapter as SendMailAdapter).messages = bundle.getStringArrayList(MESSAGES) ?: emptyList()
-        sendRecycler.adapter.notifyDataSetChanged()
+        val mailAndMessages= (intent.getSerializableExtra(BUNDLE) as ArrayList<*>)
+        (sendRecycler.adapter as SendMailAdapter).messages = mailAndMessages
 
+
+        mailAndMessages.forEach {
+            if(it is MailAndMessage) {
+                if (sendToLabel.text.contains("Till:")) {
+                    sendToLabel.text = "${sendToLabel.text}\n\t\t\t\t${it.mail}"
+                } else {
+                    sendToLabel.text = "Till:\t\t${it.mail}"
+                }
+            }
+        }
         sendBackButton.setOnClickListener {
             finish()
         }

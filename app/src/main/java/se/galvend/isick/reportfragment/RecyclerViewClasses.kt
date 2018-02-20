@@ -30,7 +30,7 @@ class KidAdapter: RecyclerView.Adapter<KidViewHolder>() {
         val kid = kids[position]
         holder?.nameLabel?.text = kid.name
         holder?.prsnNrLabel?.text = kid.personNumber
-        holder?.isSickSwitch?.isChecked = false
+        holder?.isSickSwitch?.isChecked = kid.isSick
 
         holder?.isSickSwitch?.setOnCheckedChangeListener { _, checked ->
             kid.isSick = checked

@@ -10,7 +10,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="cd_logopicture">logopicture</string>
-    <string name="hint_personnummer">personnummer</string>
+    <string name="hint_personnummer">ååmmdd-xxxx</string>
     <string name="label_vab">VAB</string>
     <string name="label_skicka">Skicka</string>
     <string name="label_logga_in">Logga in</string>

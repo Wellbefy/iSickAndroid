@@ -27,6 +27,8 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
     val kids: MediatorLiveData<List<Kid>> = kidDataBaseRepository.kids
     val events: MediatorLiveData<List<Event>> = eventDataBaseRepository.events
 
+    var staticUser: User? = null
+
     fun signOut() {
         userDataBaseRepository.stopListening()
         eventDataBaseRepository.stopListening()

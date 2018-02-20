@@ -6,13 +6,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import se.galvend.isick.R
+import se.galvend.isick.classes.MailAndMessage
 
 /**
  * Created by dennisgalven on 2018-02-20.
  * Send mail recycler viewholder and adapter
  */
 class SendMailAdapter: RecyclerView.Adapter<SendMailViewHolder>() {
-    var messages : List<String> = emptyList()
+    var messages = listOf<Any>()
 
     override fun getItemCount(): Int = messages.count()
 
@@ -22,7 +23,10 @@ class SendMailAdapter: RecyclerView.Adapter<SendMailViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: SendMailViewHolder?, position: Int) {
-        holder?.mailLabel?.text = messages[position]
+        if(messages[position] is MailAndMessage) {
+            val message = (messages[position] as MailAndMessage).message
+            holder?.mailLabel?.text = message
+        }
     }
 
 }

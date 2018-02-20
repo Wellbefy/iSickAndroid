@@ -19,8 +19,11 @@ import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_report.*
 import se.galvend.isick.R
 import se.galvend.isick.classes.CheckPersonNumber
+import se.galvend.isick.classes.MailAndMessage
+import se.galvend.isick.classes.User
 import se.galvend.isick.classes.UserViewModel
 import se.galvend.isick.sendactivity.SendActivity
+import java.io.Serializable
 import java.text.DateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -31,9 +34,7 @@ class ReportFragment : Fragment() {
         const val PREFS_NAME = "com.iSick.prefs"
         const val PERSON_NUMBER = "personNumber"
         const val BUNDLE = "BUNDLE"
-        const val MESSAGES = "MESSAGES"
         const val VAB = "VAB"
-        const val EMAILS = "EMAILS"
     }
 
     private var viewModel: ViewModel? = null
@@ -46,19 +47,7 @@ class ReportFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         vabSwitch.setOnCheckedChangeListener { _, checked ->
-            if(checked) {
-                kidRecycler.visibility = View.VISIBLE
-                kidRecycler.animate()
-                        .scaleY(1f)
-                        .setDuration(100L)
-                        .start()
-            } else {
-                kidRecycler.animate()
-                        .scaleY(0f)
-                        .setDuration(100L)
-                        .start()
-                kidRecycler.visibility = View.GONE
-            }
+            animateRecycler(checked)
         }
 
         kidRecycler.adapter = KidAdapter()
@@ -76,6 +65,7 @@ class ReportFragment : Fragment() {
 
         (viewModel as UserViewModel).user.observe(this, Observer {
             nameLabel.text = it?.name ?: ""
+            (viewModel as UserViewModel).staticUser = User(it?.name ?: "", it?.email ?: "")
         })
 
         val sharedPreferences = activity.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -125,6 +115,30 @@ class ReportFragment : Fragment() {
         }
     }
 
+    private fun animateRecycler(show: Boolean, reset: Boolean = false) {
+        if(show) {
+            kidRecycler.visibility = View.VISIBLE
+            kidRecycler.animate()
+                    .scaleY(1f)
+                    .setDuration(100L)
+                    .start()
+        } else {
+            kidRecycler.animate()
+                    .scaleY(0f)
+                    .setDuration(100L)
+                    .start()
+            kidRecycler.visibility = View.GONE
+        }
+
+        if(reset) {
+            (kidRecycler.adapter as KidAdapter).kids.forEach {
+                it.isSick = false
+            }
+            kidRecycler.adapter.notifyDataSetChanged()
+            vabSwitch.isChecked = false
+        }
+    }
+
     private fun activateDoneButton(activate: Boolean) {
         if(activate) {
             checkUserPersonNumber.visibility = View.VISIBLE
@@ -136,37 +150,37 @@ class ReportFragment : Fragment() {
     }
 
     private fun toSend() {
-        val tempMessages = ArrayList<String>()
+        val mailAndMessages = ArrayList<MailAndMessage>()
 
         val date = Date()
         val formatter = DateFormat.getDateInstance(DateFormat.DEFAULT)
         val formattedDate = formatter.format(date)
 
-        if(vabSwitch.isChecked) {
-            tempMessages.add(getString(R.string.vabmail, formattedDate, nameLabel.text, prsnrTF.text.toString()))
-
-            (kidRecycler.adapter as KidAdapter).kids.forEach {
-                if (it.isSick) {
-                    tempMessages.add(getString(R.string.sickmail, formattedDate, it.name, it.personNumber))
-                }
-            }
+        val mailAndMessage = MailAndMessage(mail = (viewModel as UserViewModel).staticUser?.email,
+                message = if(vabSwitch.isChecked) {
+            getString(R.string.vabmail, formattedDate, nameLabel.text, prsnrTF.text.toString())
         } else {
-            tempMessages.add(getString(R.string.sickmail, formattedDate, nameLabel.text, prsnrTF.text.toString()))
+            getString(R.string.sickmail, formattedDate, nameLabel.text, prsnrTF.text.toString())
+        })
+
+        mailAndMessages.add(mailAndMessage)
+
+        (kidRecycler.adapter as KidAdapter).kids.forEach {
+            if (it.isSick) {
+                val kidMailAndMessage = MailAndMessage(it.email, getString(R.string.sickmail, formattedDate, it.name, it.personNumber))
+                mailAndMessages.add(kidMailAndMessage)
+            }
         }
 
         val intent = Intent(context, SendActivity::class.java)
 
-        intent.putExtra(BUNDLE, createMessageBundle(tempMessages))
+        intent.putExtra(BUNDLE, mailAndMessages as Serializable)
 
         intent.putExtra(VAB, vabSwitch.isChecked)
-        startActivity(intent)
-    }
 
-    private fun createMessageBundle(messages: ArrayList<String>): Bundle {
-        val bundle = Bundle()
-        bundle.putStringArrayList(MESSAGES, messages)
-        Log.d(TAG, bundle.toString())
-        return bundle
+        startActivity(intent)
+
+        animateRecycler(false, true)
     }
 
     override fun onDestroy() {
