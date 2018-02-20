@@ -7,7 +7,6 @@ import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
-import android.nfc.Tag
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -17,24 +16,23 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import kotlinx.android.synthetic.main.activity_edit_add_kid.*
-import kotlinx.android.synthetic.main.activity_login_register.*
 import kotlinx.android.synthetic.main.fragment_report.*
-
 import se.galvend.isick.R
 import se.galvend.isick.classes.CheckPersonNumber
-import se.galvend.isick.classes.Event
 import se.galvend.isick.classes.UserViewModel
-import se.galvend.isick.firebase.FbEvent
 import se.galvend.isick.sendactivity.SendActivity
-import java.sql.Timestamp
+import java.text.DateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 class ReportFragment : Fragment() {
     companion object {
         const val TAG = "ReportFragment"
         const val PREFS_NAME = "com.iSick.prefs"
         const val PERSON_NUMBER = "personNumber"
+        const val BUNDLE = "BUNDLE"
+        const val MESSAGES = "MESSAGES"
+        const val VAB = "VAB"
     }
 
     var viewModel: ViewModel? = null
@@ -116,17 +114,13 @@ class ReportFragment : Fragment() {
         })
 
         sendButton.setOnClickListener {
-            (kidRecycler.adapter as KidAdapter).kids.forEach {
-//                val seconds = System.currentTimeMillis()/1000
-//                val event = FbEvent(seconds, "Sandra Bengtsson", true, true)
-//                viewModel.uploadEvent(event)
-                Log.d(TAG, "send")
-                val editor = sharedPreferences.edit()
-                editor.putString(PERSON_NUMBER, prsnrTF.text.toString())
-                editor.apply()
+            Log.d(TAG, "send")
 
-                toSend()
-            }
+            val editor = sharedPreferences.edit()
+            editor.putString(PERSON_NUMBER, prsnrTF.text.toString())
+            editor.apply()
+
+            toSend()
         }
     }
 
@@ -141,8 +135,35 @@ class ReportFragment : Fragment() {
     }
 
     private fun toSend() {
+        val tempMessages = ArrayList<String>()
+
+        val date = Date()
+        val formatter = DateFormat.getDateInstance(DateFormat.DEFAULT)
+        val formattedDate = formatter.format(date)
+
+        if(vabSwitch.isChecked) {
+            tempMessages.add(getString(R.string.vabmail, formattedDate, nameLabel.text, prsnrTF.text.toString()))
+
+            (kidRecycler.adapter as KidAdapter).kids.forEach {
+                if (it.isSick) tempMessages.add(getString(R.string.sickmail, formattedDate, it.name, it.personNumber))
+            }
+        } else {
+            tempMessages.add(getString(R.string.sickmail, formattedDate, nameLabel.text, prsnrTF.text.toString()))
+        }
+
         val intent = Intent(context, SendActivity::class.java)
+
+        intent.putExtra(BUNDLE, createBundle(tempMessages))
+
+        intent.putExtra(VAB, vabSwitch.isChecked)
         startActivity(intent)
+    }
+
+    private fun createBundle(messages: ArrayList<String>): Bundle {
+        val bundle = Bundle()
+        bundle.putStringArrayList(MESSAGES, messages)
+        Log.d(TAG, bundle.toString())
+        return bundle
     }
 
     override fun onDestroy() {

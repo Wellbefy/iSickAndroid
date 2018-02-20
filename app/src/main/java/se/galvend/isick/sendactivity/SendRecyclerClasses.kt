@@ -14,9 +14,9 @@ import java.util.*
  * Send mail recycler viewholder and adapter
  */
 class SendMailAdapter: RecyclerView.Adapter<SendMailViewHolder>() {
-    var personNumber: String? = ""
-    var name: String? = ""
-    override fun getItemCount(): Int = 2
+    var messages : List<String> = emptyList()
+
+    override fun getItemCount(): Int = messages.count()
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): SendMailViewHolder {
         val view = LayoutInflater.from(parent?.context).inflate(R.layout.send_cell, parent, false)
@@ -25,10 +25,7 @@ class SendMailAdapter: RecyclerView.Adapter<SendMailViewHolder>() {
 
 
     override fun onBindViewHolder(holder: SendMailViewHolder?, position: Int) {
-        val date = Date()
-        val formatter = DateFormat.getDateInstance(DateFormat.DEFAULT)
-        val text = holder?.itemView?.context?.getString(R.string.sickmail, formatter.format(date), name, personNumber)
-        holder?.mailLabel?.text = text
+        holder?.mailLabel?.text = messages[position]
     }
 
 }
