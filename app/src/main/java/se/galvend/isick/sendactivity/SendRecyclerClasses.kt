@@ -6,8 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import se.galvend.isick.R
-import java.text.DateFormat
-import java.util.*
 
 /**
  * Created by dennisgalven on 2018-02-20.
@@ -23,12 +21,12 @@ class SendMailAdapter: RecyclerView.Adapter<SendMailViewHolder>() {
         return SendMailViewHolder(view)
     }
 
-
     override fun onBindViewHolder(holder: SendMailViewHolder?, position: Int) {
         holder?.mailLabel?.text = messages[position]
     }
 
 }
+
 class SendMailViewHolder(view: View): RecyclerView.ViewHolder(view){
     val mailLabel: TextView = view.findViewById(R.id.mailTextLabel)
 }

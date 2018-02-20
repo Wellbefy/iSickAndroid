@@ -33,9 +33,10 @@ class ReportFragment : Fragment() {
         const val BUNDLE = "BUNDLE"
         const val MESSAGES = "MESSAGES"
         const val VAB = "VAB"
+        const val EMAILS = "EMAILS"
     }
 
-    var viewModel: ViewModel? = null
+    private var viewModel: ViewModel? = null
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater!!.inflate(R.layout.fragment_report, container, false)
@@ -145,7 +146,9 @@ class ReportFragment : Fragment() {
             tempMessages.add(getString(R.string.vabmail, formattedDate, nameLabel.text, prsnrTF.text.toString()))
 
             (kidRecycler.adapter as KidAdapter).kids.forEach {
-                if (it.isSick) tempMessages.add(getString(R.string.sickmail, formattedDate, it.name, it.personNumber))
+                if (it.isSick) {
+                    tempMessages.add(getString(R.string.sickmail, formattedDate, it.name, it.personNumber))
+                }
             }
         } else {
             tempMessages.add(getString(R.string.sickmail, formattedDate, nameLabel.text, prsnrTF.text.toString()))
@@ -153,13 +156,13 @@ class ReportFragment : Fragment() {
 
         val intent = Intent(context, SendActivity::class.java)
 
-        intent.putExtra(BUNDLE, createBundle(tempMessages))
+        intent.putExtra(BUNDLE, createMessageBundle(tempMessages))
 
         intent.putExtra(VAB, vabSwitch.isChecked)
         startActivity(intent)
     }
 
-    private fun createBundle(messages: ArrayList<String>): Bundle {
+    private fun createMessageBundle(messages: ArrayList<String>): Bundle {
         val bundle = Bundle()
         bundle.putStringArrayList(MESSAGES, messages)
         Log.d(TAG, bundle.toString())

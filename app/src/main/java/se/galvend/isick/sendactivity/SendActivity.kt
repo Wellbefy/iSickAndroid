@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.PagerSnapHelper
+import android.util.Log
 import kotlinx.android.synthetic.main.activity_send.*
 import se.galvend.isick.R
 class SendActivity : AppCompatActivity() {
