@@ -6,6 +6,7 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
+import android.content.Intent
 import android.nfc.Tag
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -25,6 +26,7 @@ import se.galvend.isick.classes.CheckPersonNumber
 import se.galvend.isick.classes.Event
 import se.galvend.isick.classes.UserViewModel
 import se.galvend.isick.firebase.FbEvent
+import se.galvend.isick.sendactivity.SendActivity
 import java.sql.Timestamp
 import java.util.*
 
@@ -122,6 +124,8 @@ class ReportFragment : Fragment() {
                 val editor = sharedPreferences.edit()
                 editor.putString(PERSON_NUMBER, prsnrTF.text.toString())
                 editor.apply()
+
+                toSend()
             }
         }
     }
@@ -134,6 +138,11 @@ class ReportFragment : Fragment() {
             checkUserPersonNumber.visibility = View.INVISIBLE
             sendButton.isEnabled = false
         }
+    }
+
+    private fun toSend() {
+        val intent = Intent(context, SendActivity::class.java)
+        startActivity(intent)
     }
 
     override fun onDestroy() {

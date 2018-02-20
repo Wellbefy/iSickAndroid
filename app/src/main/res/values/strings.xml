@@ -33,7 +33,7 @@
     <string name="label_radera">Radera</string>
     <string name="hint_name"><![CDATA[för-& efternamn]]></string>
     <string name="hint_email_till_sjukansvarig">email till sjukansvarig</string>
-
+    <string name="sickmail">%S\n\nHej,\n\n%S, %S, är sjuk idag.\n\nSkickat via\niSick\n'appen för snabb frånvaroanmälan'.</string>
     <string-array name="months">
         <item>Januari</item>
         <item>Februari</item>
