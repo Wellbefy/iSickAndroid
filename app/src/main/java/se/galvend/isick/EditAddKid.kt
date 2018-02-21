@@ -22,6 +22,8 @@ class EditAddKid : AppCompatActivity() {
         const val TAG = "EditAddKid"
     }
 
+    private var fromReport = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_add_kid)

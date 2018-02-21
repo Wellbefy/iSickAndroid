@@ -1,7 +1,6 @@
 package se.galvend.isick.reportfragment
 
 
-import android.animation.Animator
 import android.annotation.SuppressLint
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModel
@@ -16,7 +15,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import kotlinx.android.synthetic.main.fragment_report.*
 import se.galvend.isick.EditAddKid
@@ -36,6 +34,8 @@ class ReportFragment : Fragment() {
     }
 
     private var viewModel: ViewModel? = null
+
+    private var toAddKid = false
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater!!.inflate(R.layout.fragment_report, container, false)
@@ -58,7 +58,15 @@ class ReportFragment : Fragment() {
 
         (viewModel as UserViewModel).kids.observe(this , Observer{
             (kidRecycler.adapter as KidAdapter).kids = it ?: emptyList()
+            if(!(kidRecycler.adapter as KidAdapter).kids.isEmpty()) {
+                (kidRecycler.adapter as KidAdapter).kids.last().isSick = toAddKid
+            }
             kidRecycler.adapter.notifyDataSetChanged()
+
+            if(toAddKid) {
+                animateRecycler(true)
+                toAddKid = false
+            }
         })
 
         (viewModel as UserViewModel).user.observe(this, Observer {
@@ -133,7 +141,7 @@ class ReportFragment : Fragment() {
         if(show) {
             kidRecycler.visibility = View.VISIBLE
             kidRecycler.animate()
-                    .scaleY(1f)
+                    .scaleYBy(1f)
                     .setDuration(100L)
                     .start()
         } else {
@@ -188,6 +196,7 @@ class ReportFragment : Fragment() {
     }
 
     private fun toAddKids() {
+        toAddKid = true
         val intent = Intent(context, EditAddKid::class.java)
         startActivity(intent)
     }
