@@ -9,6 +9,7 @@ import android.support.v7.widget.PagerSnapHelper
 import kotlinx.android.synthetic.main.activity_send.*
 import se.galvend.isick.R
 import se.galvend.isick.classes.MailAndMessage
+import se.galvend.isick.classes.MyAlertDialog
 
 class SendActivity : AppCompatActivity() {
 
@@ -45,9 +46,28 @@ class SendActivity : AppCompatActivity() {
                 }
             }
         }
+
+        sendButton.setOnClickListener {
+            send(vab)
+        }
+
         sendBackButton.setOnClickListener {
             finish()
         }
+    }
+
+    private fun send(vab: Boolean) {
+        if(vab) {
+            val alert = MyAlertDialog()
+            alert.twoAction(this, titleText = "Anmäla till försäkringskassan?", message = "", callback = { ok ->
+                if(ok) {
+                  //skicka sms
+                }
+            })
+        }
+
+        //skicka mail
+        //ladda upp event
     }
 
     override fun onDestroy() {
