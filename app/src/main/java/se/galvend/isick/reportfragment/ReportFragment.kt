@@ -31,8 +31,6 @@ import kotlin.collections.ArrayList
 class ReportFragment : Fragment() {
     companion object {
         const val TAG = "ReportFragment"
-        const val PREFS_NAME = "com.iSick.prefs"
-        const val PERSON_NUMBER = "personNumber"
         const val BUNDLE = "BUNDLE"
         const val VAB = "VAB"
     }
@@ -68,11 +66,10 @@ class ReportFragment : Fragment() {
             (viewModel as UserViewModel).staticUser = User(it?.name ?: "", it?.email ?: "")
         })
 
-        val sharedPreferences = activity.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        val fetchedPersonNumber = sharedPreferences?.getString(PERSON_NUMBER, "")
+        val fetchedPersonNumber = (viewModel as UserViewModel).sharedPrefs.fetchSharedPrefs(context)
 
         val checkPersonNumber = CheckPersonNumber()
-        activateDoneButton(checkPersonNumber.checkNumber(fetchedPersonNumber ?: ""))
+        activateDoneButton(checkPersonNumber.checkNumber(fetchedPersonNumber))
 
         prsnrTF.setText(fetchedPersonNumber)
         prsnrTF.setSelection(prsnrTF.text.count())
@@ -107,11 +104,13 @@ class ReportFragment : Fragment() {
         sendButton.setOnClickListener {
             Log.d(TAG, "send")
 
-            val editor = sharedPreferences.edit()
-            editor.putString(PERSON_NUMBER, prsnrTF.text.toString())
-            editor.apply()
+            (viewModel as UserViewModel).sharedPrefs.saveToSharedPrefs(context, prsnrTF.text.toString())
 
-            toSend()
+            if(vabSwitch.isChecked && (kidRecycler.adapter as KidAdapter).kids.isEmpty()) {
+                //alert add kids
+            } else {
+                toSend()
+            }
         }
     }
 

@@ -23,6 +23,8 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
     private val eventDataBaseRepository = EventDataBaseRepository()
     private val auth = Auth()
 
+    val sharedPrefs = SharedPrefs()
+
     val user: MediatorLiveData<User> = userDataBaseRepository.user
     val kids: MediatorLiveData<List<Kid>> = kidDataBaseRepository.kids
     val events: MediatorLiveData<List<Event>> = eventDataBaseRepository.events
