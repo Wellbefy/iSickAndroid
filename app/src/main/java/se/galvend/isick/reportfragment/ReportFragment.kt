@@ -1,11 +1,11 @@
 package se.galvend.isick.reportfragment
 
 
+import android.animation.Animator
 import android.annotation.SuppressLint
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProviders
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -16,6 +16,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import kotlinx.android.synthetic.main.fragment_report.*
 import se.galvend.isick.EditAddKid
 import se.galvend.isick.R
@@ -67,7 +69,6 @@ class ReportFragment : Fragment() {
         val fetchedPersonNumber = (viewModel as UserViewModel).sharedPrefs.fetchSharedPrefs(context)
 
         val checkPersonNumber = CheckPersonNumber()
-        activateDoneButton(checkPersonNumber.checkNumber(fetchedPersonNumber))
 
         prsnrTF.setText(fetchedPersonNumber)
         prsnrTF.setSelection(prsnrTF.text.count())
@@ -86,7 +87,11 @@ class ReportFragment : Fragment() {
                 if (prsnrTF.text.count() < 6) inserted = false
 
                 val text = prsnrTF.text.toString()
-                activateDoneButton(checkPersonNumber.checkNumber(text))
+                if(checkPersonNumber.checkNumber(text)) {
+                    checkUserPersonNumber.visibility = View.VISIBLE
+                } else {
+                    checkUserPersonNumber.visibility = View.INVISIBLE
+                }
             }
 
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
@@ -101,20 +106,23 @@ class ReportFragment : Fragment() {
 
         sendButton.setOnClickListener {
             Log.d(TAG, "send")
-
-            (viewModel as UserViewModel).sharedPrefs.saveToSharedPrefs(context, prsnrTF.text.toString())
-
-            if(vabSwitch.isChecked && (kidRecycler.adapter as KidAdapter).kids.isEmpty()) {
-                val alertDialog = MyAlertDialog()
-                alertDialog.twoAction(context, "Inga barn tillagda", "Vill du lägga till ett?", { OK ->
-                    if(OK) {
-                        toAddKids()
-                    } else {
-                        toSend()
-                    }
-                })
+            if(!checkPersonNumber.checkNumber(prsnrTF.text.toString())) {
+                shakeEditText()
             } else {
-                toSend()
+                (viewModel as UserViewModel).sharedPrefs.saveToSharedPrefs(context, prsnrTF.text.toString())
+
+                if(vabSwitch.isChecked && (kidRecycler.adapter as KidAdapter).kids.isEmpty()) {
+                    val alertDialog = MyAlertDialog()
+                    alertDialog.twoAction(context, "Inga barn tillagda", "Vill du lägga till ett?", { OK ->
+                        if(OK) {
+                            toAddKids()
+                        } else {
+                            toSend()
+                        }
+                    })
+                } else {
+                    toSend()
+                }
             }
         }
     }
@@ -142,16 +150,6 @@ class ReportFragment : Fragment() {
             }
             kidRecycler.adapter.notifyDataSetChanged()
             vabSwitch.isChecked = false
-        }
-    }
-
-    private fun activateDoneButton(activate: Boolean) {
-        if(activate) {
-            checkUserPersonNumber.visibility = View.VISIBLE
-            sendButton.isEnabled = true
-        } else {
-            checkUserPersonNumber.visibility = View.INVISIBLE
-            sendButton.isEnabled = false
         }
     }
 
@@ -192,6 +190,10 @@ class ReportFragment : Fragment() {
     private fun toAddKids() {
         val intent = Intent(context, EditAddKid::class.java)
         startActivity(intent)
+    }
+
+    private fun shakeEditText() {
+        prsnrTF.startAnimation(AnimationUtils.loadAnimation(context, R.anim.wobble))
     }
 
     override fun onDestroy() {
