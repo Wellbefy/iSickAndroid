@@ -28,7 +28,7 @@ class SharedPrefs {
     fun deleteSharedPrefs(context: Context) {
         val sharedPreferences = sharedPrefs(context)
         val editor = sharedPreferences.edit()
-        editor.putString(PERSON_NUMBER, "")
+        editor.clear()
         editor.apply()
     }
 

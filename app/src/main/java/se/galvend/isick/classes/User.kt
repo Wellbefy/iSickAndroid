@@ -3,6 +3,7 @@ package se.galvend.isick.classes
 import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.MediatorLiveData
+import android.content.Context
 import android.util.Log
 import se.galvend.isick.firebase.*
 import java.util.*
@@ -31,10 +32,11 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
 
     var staticUser: User? = null
 
-    fun signOut() {
+    fun signOut(context: Context) {
         userDataBaseRepository.stopListening()
         eventDataBaseRepository.stopListening()
         kidDataBaseRepository.stopListening()
+        sharedPrefs.deleteSharedPrefs(context)
         auth.signOut()
     }
 

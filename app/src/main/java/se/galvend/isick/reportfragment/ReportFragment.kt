@@ -17,11 +17,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_report.*
+import se.galvend.isick.EditAddKid
 import se.galvend.isick.R
-import se.galvend.isick.classes.CheckPersonNumber
-import se.galvend.isick.classes.MailAndMessage
-import se.galvend.isick.classes.User
-import se.galvend.isick.classes.UserViewModel
+import se.galvend.isick.classes.*
 import se.galvend.isick.sendactivity.SendActivity
 import java.io.Serializable
 import java.text.DateFormat
@@ -107,7 +105,14 @@ class ReportFragment : Fragment() {
             (viewModel as UserViewModel).sharedPrefs.saveToSharedPrefs(context, prsnrTF.text.toString())
 
             if(vabSwitch.isChecked && (kidRecycler.adapter as KidAdapter).kids.isEmpty()) {
-                //alert add kids
+                val alertDialog = MyAlertDialog()
+                alertDialog.twoAction(context, "Inga barn tillagda", "Vill du lägga till ett?", { OK ->
+                    if(OK) {
+                        toAddKids()
+                    } else {
+                        toSend()
+                    }
+                })
             } else {
                 toSend()
             }
@@ -115,6 +120,8 @@ class ReportFragment : Fragment() {
     }
 
     private fun animateRecycler(show: Boolean, reset: Boolean = false) {
+        if((kidRecycler.adapter as KidAdapter).kids.isEmpty()) return
+
         if(show) {
             kidRecycler.visibility = View.VISIBLE
             kidRecycler.animate()
@@ -182,11 +189,17 @@ class ReportFragment : Fragment() {
         animateRecycler(false, true)
     }
 
+    private fun toAddKids() {
+        val intent = Intent(context, EditAddKid::class.java)
+        startActivity(intent)
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         (viewModel as UserViewModel).kids.removeObservers(this)
         (viewModel as UserViewModel).user.removeObservers(this)
     }
 }// Required empty public constructor
+
 
 
