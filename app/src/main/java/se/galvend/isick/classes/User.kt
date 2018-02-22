@@ -31,8 +31,6 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
     val kids: MediatorLiveData<List<Kid>> = kidDataBaseRepository.kids
     val events: MediatorLiveData<List<Event>> = eventDataBaseRepository.events
 
-    var staticUser: User? = null
-
     fun signOut(context: Context) {
         userDataBaseRepository.stopListening()
         eventDataBaseRepository.stopListening()
@@ -49,8 +47,8 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
         userDataBaseRepository.changeUserEmail(email)
     }
 
-    fun uploadEvent(event: FbEvent) {
-        eventDataBaseRepository.uploadEvent(event)
+    fun uploadEvent(name: String, vab: Boolean = false, reported: Boolean = false) {
+        eventDataBaseRepository.uploadEvent(name, vab, reported)
     }
 
     fun removeEvent(id: String?) {

@@ -21,15 +21,12 @@ import se.galvend.isick.EditAddKid
 import se.galvend.isick.R
 import se.galvend.isick.classes.*
 import se.galvend.isick.sendactivity.SendActivity
-import java.io.Serializable
 import java.text.DateFormat
 import java.util.*
-import kotlin.collections.ArrayList
 
 class ReportFragment : Fragment() {
     companion object {
         const val TAG = "ReportFragment"
-        const val BUNDLE = "BUNDLE"
         const val VAB = "VAB"
     }
 
@@ -71,7 +68,7 @@ class ReportFragment : Fragment() {
 
         (viewModel as UserViewModel).user.observe(this, Observer {
             nameLabel.text = it?.name ?: ""
-            (viewModel as UserViewModel).staticUser = User(it?.name ?: "", it?.email ?: "")
+            StaticUser.staticUser = User(it?.name ?: "", it?.email ?: "")
         })
 
         val fetchedPersonNumber = (viewModel as UserViewModel).sharedPrefs.fetchSharedPrefs(context)
@@ -162,31 +159,28 @@ class ReportFragment : Fragment() {
     }
 
     private fun toSend() {
-        val mailAndMessages = ArrayList<MailAndMessage>()
-
         val date = Date()
         val formatter = DateFormat.getDateInstance(DateFormat.DEFAULT)
         val formattedDate = formatter.format(date)
 
-        val mailAndMessage = MailAndMessage(mail = (viewModel as UserViewModel).staticUser?.email,
+        val mailAndMessage = MailAndMessage(name = StaticUser.staticUser?.name, mail = StaticUser.staticUser?.email,
                 message = if(vabSwitch.isChecked) {
             getString(R.string.vabmail, formattedDate, nameLabel.text, prsnrTF.text.toString())
         } else {
             getString(R.string.sickmail, formattedDate, nameLabel.text, prsnrTF.text.toString())
         })
 
-        mailAndMessages.add(mailAndMessage)
+        StaticUser.mailAndMessages += mailAndMessage
 
         (kidRecycler.adapter as KidAdapter).kids.forEach {
             if (it.isSick) {
-                val kidMailAndMessage = MailAndMessage(it.email, getString(R.string.sickmail, formattedDate, it.name, it.personNumber))
-                mailAndMessages.add(kidMailAndMessage)
+                val kidMailAndMessage = MailAndMessage(it.name, it.email, getString(R.string.sickmail, formattedDate, it.name, it.personNumber))
+                StaticUser.mailAndMessages += kidMailAndMessage
             }
         }
 
+        Log.d(TAG, StaticUser.mailAndMessages.toString())
         val intent = Intent(context, SendActivity::class.java)
-
-        intent.putExtra(BUNDLE, mailAndMessages as Serializable)
 
         intent.putExtra(VAB, vabSwitch.isChecked)
 

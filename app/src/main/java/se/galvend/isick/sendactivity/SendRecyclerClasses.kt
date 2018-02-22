@@ -13,7 +13,7 @@ import se.galvend.isick.classes.MailAndMessage
  * Send mail recycler viewholder and adapter
  */
 class SendMailAdapter: RecyclerView.Adapter<SendMailViewHolder>() {
-    var messages = listOf<Any>()
+    var messages = listOf<MailAndMessage>()
 
     override fun getItemCount(): Int = messages.count()
 
@@ -23,10 +23,8 @@ class SendMailAdapter: RecyclerView.Adapter<SendMailViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: SendMailViewHolder?, position: Int) {
-        if(messages[position] is MailAndMessage) {
-            val message = (messages[position] as MailAndMessage).message
-            holder?.mailLabel?.text = message
-        }
+        val message = (messages[position] as MailAndMessage).message
+        holder?.mailLabel?.text = message
     }
 
 }

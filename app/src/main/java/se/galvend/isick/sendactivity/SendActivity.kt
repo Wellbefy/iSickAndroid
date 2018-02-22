@@ -9,18 +9,18 @@ import android.os.Bundle
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.PagerSnapHelper
 import android.telephony.SmsManager
+import android.util.Log
 import kotlinx.android.synthetic.main.activity_send.*
 import se.galvend.isick.R
-import se.galvend.isick.classes.MailAndMessage
 import se.galvend.isick.classes.MyAlertDialog
+import se.galvend.isick.classes.StaticUser
 import se.galvend.isick.classes.UserViewModel
-import se.galvend.isick.sms.PermissionManager
+import se.galvend.isick.permissions.PermissionManager
 
 class SendActivity : AppCompatActivity() {
 
     companion object {
         const val TAG = "SendActivity"
-        const val BUNDLE = "BUNDLE"
         const val VAB = "VAB"
         const val SMS_PERMISSION_CODE = 0
     }
@@ -29,31 +29,31 @@ class SendActivity : AppCompatActivity() {
     private val permissionManager = PermissionManager()
     private val alert = MyAlertDialog()
 
+    private var vab = false
+
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_send)
 
         viewModel = ViewModelProviders.of(this).get(UserViewModel::class.java)
-
-        val vab = intent.getBooleanExtra(VAB, false)
+        Log.d(TAG, StaticUser.mailAndMessages.toString())
+        Log.d(TAG, StaticUser.staticUser.toString())
+        vab = intent.getBooleanExtra(VAB, false)
 
         sendRecycler.adapter = SendMailAdapter()
         sendRecycler.layoutManager = GridLayoutManager(this, 1, GridLayoutManager.HORIZONTAL, false)
         val pager = PagerSnapHelper()
         pager.attachToRecyclerView(sendRecycler)
 
-        val mailAndMessages= (intent.getSerializableExtra(BUNDLE) as ArrayList<*>)
-        (sendRecycler.adapter as SendMailAdapter).messages = mailAndMessages
+        (sendRecycler.adapter as SendMailAdapter).messages = StaticUser.mailAndMessages
 
 
-        mailAndMessages.forEach {
-            if(it is MailAndMessage) {
-                if (sendToLabel.text.contains("Till:")) {
-                    sendToLabel.text = "${sendToLabel.text}\n\t\t\t\t${it.mail}"
-                } else {
-                    sendToLabel.text = "Till:\t\t${it.mail}"
-                }
+        StaticUser.mailAndMessages.forEach {
+            if (sendToLabel.text.contains("Till:")) {
+                sendToLabel.text = "${sendToLabel.text}\n\t\t\t\t${it.mail}"
+            } else {
+                sendToLabel.text = "Till:\t\t${it.mail}"
             }
         }
 
@@ -67,14 +67,14 @@ class SendActivity : AppCompatActivity() {
     }
 
     private fun send(vab: Boolean) {
-        if(vab) {
-            alert.twoAction(this, titleText = "Anmäla till försäkringskassan?", message = "", callback = { ok ->
-                if(ok) {
-                    checkSMS()
-                }
-            })
-        }
-
+//        if(vab) {
+//            alert.twoAction(this, titleText = "Anmäla till försäkringskassan?", message = "", callback = { ok ->
+//                if(ok) {
+//                    checkSMS()
+//                }
+//            })
+//        }
+        uploadEvent()
         //skicka mail
         //ladda upp event
     }
@@ -104,6 +104,16 @@ class SendActivity : AppCompatActivity() {
         }
     }
 
+    private fun uploadEvent(reported: Boolean = false) {
+        if(vab) {
+            StaticUser.mailAndMessages.forEach {
+                (viewModel as UserViewModel).uploadEvent(it.name ?: "", vab, reported)
+            }
+        } else {
+            (viewModel as UserViewModel).uploadEvent(StaticUser.staticUser?.name ?: "")
+        }
+    }
+
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when(requestCode) {
@@ -121,5 +131,6 @@ class SendActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         viewModel = null
+        StaticUser.mailAndMessages = emptyList()
     }
 }

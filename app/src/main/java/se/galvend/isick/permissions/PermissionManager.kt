@@ -1,11 +1,9 @@
-package se.galvend.isick.sms
+package se.galvend.isick.permissions
 
-import android.content.Context
 import android.content.pm.PackageManager
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.FragmentActivity
 import android.support.v4.content.ContextCompat
-import se.galvend.isick.Manifest
 
 /**
  * Created by dennisgalven on 2018-02-22.

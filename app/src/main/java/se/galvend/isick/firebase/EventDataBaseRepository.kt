@@ -55,9 +55,11 @@ class EventDataBaseRepository {
         }
     }
 
-    fun uploadEvent(event: FbEvent) {
+    fun uploadEvent(name: String, vab: Boolean, reported: Boolean) {
         if(eventDataBaseReference == null) return
 
+        val time = System.currentTimeMillis()/1000
+        val event = FbEvent(date = time, name = name, reported = reported, vab = vab)
         eventDataBaseReference?.push()?.setValue(event)
     }
 
