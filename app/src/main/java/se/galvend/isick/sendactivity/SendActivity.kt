@@ -65,16 +65,15 @@ class SendActivity : AppCompatActivity() {
     }
 
     private fun send(vab: Boolean) {
-//        if(vab) {
-//            alert.twoAction(this, titleText = "Anmäla till försäkringskassan?", message = "", callback = { ok ->
-//                if(ok) {
-//                    checkSMS()
-//                }
-//            })
-//        }
-        uploadEvent()
-        //skicka mail
-        //ladda upp event
+        if(vab) {
+            alert.twoAction(this, titleText = "Anmäla till försäkringskassan?", message = "", callback = { ok ->
+                if(ok) {
+                    checkSMS()
+                }
+            })
+        } else {
+            sendMail()
+        }
     }
 
     private fun checkSMS() {
@@ -91,6 +90,8 @@ class SendActivity : AppCompatActivity() {
             mailManager.sendMail(it.name ?: "", it.message ?: "", it.mail ?: "", {fault ->
                 if(fault != null) {
                     Log.d(TAG, fault.message)
+                } else {
+                    uploadEvent()
                 }
             })
         }
@@ -105,6 +106,7 @@ class SendActivity : AppCompatActivity() {
                 })
             } else {
                 SmsManager.getDefault().sendTextMessage(number, null, "", null, null)
+                sendMail()
             }
         }
     }
@@ -126,7 +128,7 @@ class SendActivity : AppCompatActivity() {
                 if((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                     sendSMS()
                 } else {
-                    //not granted
+                    sendMail()
                 }
                 return
             }
