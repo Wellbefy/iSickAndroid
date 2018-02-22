@@ -1,11 +1,14 @@
 package se.galvend.isick
 
-import android.app.Application
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import com.backendless.Backendless
+import com.backendless.async.callback.AsyncCallback
+import com.backendless.exceptions.BackendlessFault
+import com.backendless.messaging.MessageStatus
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_tab.*
 import se.galvend.isick.historyfragment.HistoryFragment
@@ -17,6 +20,7 @@ class TabActivity : AppCompatActivity() {
     companion object {
         const val APP_ID = "BFE28D15-3D32-8469-FFE8-5889EFA17800"
         const val API_KEY = "27D05CDF-048E-1857-FF64-AC7F53B33400"
+        const val TAG = "TabActivity"
     }
 
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
@@ -52,6 +56,7 @@ class TabActivity : AppCompatActivity() {
         setContentView(R.layout.activity_tab)
 
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
+        Backendless.initApp(this, APP_ID, API_KEY)
 
         if (savedInstanceState == null) {
             supportFragmentManager
@@ -68,9 +73,6 @@ class TabActivity : AppCompatActivity() {
                 val intent = Intent(this, LoginRegisterActivity::class.java)
                 startActivity(intent)
                 this.finish()
-            } else {
-                Backendless.initApp(this, APP_ID, API_KEY)
-                Backendless.Messaging.sendTextEmail("Hej", "Testar", "dennis.galven@gmail.com")
             }
         }
     }

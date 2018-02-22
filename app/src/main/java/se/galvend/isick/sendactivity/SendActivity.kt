@@ -12,9 +12,7 @@ import android.telephony.SmsManager
 import android.util.Log
 import kotlinx.android.synthetic.main.activity_send.*
 import se.galvend.isick.R
-import se.galvend.isick.classes.MyAlertDialog
-import se.galvend.isick.classes.StaticUser
-import se.galvend.isick.classes.UserViewModel
+import se.galvend.isick.classes.*
 import se.galvend.isick.permissions.PermissionManager
 
 class SendActivity : AppCompatActivity() {
@@ -88,14 +86,21 @@ class SendActivity : AppCompatActivity() {
     }
 
     private fun sendMail() {
-
+        val mailManager = MailManager()
+        StaticUser.mailAndMessages.forEach {
+            mailManager.sendMail(it.name ?: "", it.message ?: "", it.mail ?: "", {fault ->
+                if(fault != null) {
+                    Log.d(TAG, fault.message)
+                }
+            })
+        }
     }
 
     private fun sendSMS() {
         (viewModel as UserViewModel).fkFireBase.getFKNumber { number ->
             if (number == null) {
                 alert.twoAction(this, "Ojdå! Något gick fel.", "Vill du försöka igen?", { ok ->
-                    if(ok) sendSMS()
+                    if(ok) checkSMS()
                     else sendMail()
                 })
             } else {
