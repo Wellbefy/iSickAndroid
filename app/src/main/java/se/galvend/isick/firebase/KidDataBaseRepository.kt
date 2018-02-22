@@ -8,6 +8,7 @@ import se.galvend.isick.classes.Kid
 
 /**
  * Created by dennisgalven on 2018-02-14.
+ * Kid Fire Base class
  */
 
 data class FbKid(val email: String = "",

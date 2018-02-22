@@ -8,6 +8,7 @@ import se.galvend.isick.classes.Event
 
 /**
  * Created by dennisgalven on 2018-02-14.
+ * Event FireBase Class
  */
 data class FbEvent(val date: Long? = 0L,
                    val name: String? = "",

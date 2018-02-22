@@ -2,14 +2,19 @@ package se.galvend.isick.sendactivity
 
 import android.annotation.SuppressLint
 import android.arch.lifecycle.ViewModel
+import android.arch.lifecycle.ViewModelProviders
+import android.content.pm.PackageManager
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.PagerSnapHelper
+import android.telephony.SmsManager
 import kotlinx.android.synthetic.main.activity_send.*
 import se.galvend.isick.R
 import se.galvend.isick.classes.MailAndMessage
 import se.galvend.isick.classes.MyAlertDialog
+import se.galvend.isick.classes.UserViewModel
+import se.galvend.isick.sms.PermissionManager
 
 class SendActivity : AppCompatActivity() {
 
@@ -17,14 +22,19 @@ class SendActivity : AppCompatActivity() {
         const val TAG = "SendActivity"
         const val BUNDLE = "BUNDLE"
         const val VAB = "VAB"
+        const val SMS_PERMISSION_CODE = 0
     }
 
     private var viewModel: ViewModel? = null
+    private val permissionManager = PermissionManager()
+    private val alert = MyAlertDialog()
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_send)
+
+        viewModel = ViewModelProviders.of(this).get(UserViewModel::class.java)
 
         val vab = intent.getBooleanExtra(VAB, false)
 
@@ -58,16 +68,54 @@ class SendActivity : AppCompatActivity() {
 
     private fun send(vab: Boolean) {
         if(vab) {
-            val alert = MyAlertDialog()
             alert.twoAction(this, titleText = "Anmäla till försäkringskassan?", message = "", callback = { ok ->
                 if(ok) {
-                  //skicka sms
+                    checkSMS()
                 }
             })
         }
 
         //skicka mail
         //ladda upp event
+    }
+
+    private fun checkSMS() {
+        if(!permissionManager.isPermissionGranted(this, android.Manifest.permission.SEND_SMS)) {
+            permissionManager.requestPermission(this, android.Manifest.permission.SEND_SMS, SMS_PERMISSION_CODE)
+        } else {
+            sendSMS()
+        }
+    }
+
+    private fun sendMail() {
+
+    }
+
+    private fun sendSMS() {
+        (viewModel as UserViewModel).fkFireBase.getFKNumber { number ->
+            if (number == null) {
+                alert.twoAction(this, "Ojdå! Något gick fel.", "Vill du försöka igen?", { ok ->
+                    if(ok) sendSMS()
+                    else sendMail()
+                })
+            } else {
+                SmsManager.getDefault().sendTextMessage(number, null, "", null, null)
+            }
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when(requestCode) {
+            SMS_PERMISSION_CODE -> {
+                if((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    sendSMS()
+                } else {
+                    //not granted
+                }
+                return
+            }
+        }
     }
 
     override fun onDestroy() {

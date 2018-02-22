@@ -25,6 +25,8 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
 
     val sharedPrefs = SharedPrefs()
 
+    val fkFireBase = FKFireBase()
+
     val user: MediatorLiveData<User> = userDataBaseRepository.user
     val kids: MediatorLiveData<List<Kid>> = kidDataBaseRepository.kids
     val events: MediatorLiveData<List<Event>> = eventDataBaseRepository.events

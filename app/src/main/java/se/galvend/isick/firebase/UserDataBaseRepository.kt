@@ -9,6 +9,7 @@ import se.galvend.isick.classes.User
 
 /**
  * Created by dennisgalven on 2018-02-12.
+ * User FireBase class
  */
 
 class UserDataBaseRepository {
@@ -52,16 +53,13 @@ class UserDataBaseRepository {
     }
 
     private fun getUserInfo() {
-        if(userDatabaseRef == null) {
-            return
-        }
+        if(userDatabaseRef == null) return
 
         userDatabaseRef?.addValueEventListener(userInfoEventListener)
     }
 
     fun changeUserName(name: String) {
         if(userDatabaseRef == null) return
-
 
         userDatabaseRef?.child("name")?.setValue(name)
     }
