@@ -157,8 +157,8 @@ class ReportFragment : Fragment() {
     }
 
     private fun toSend() {
-        val mailAndMessage = MailAndMessage(name = StaticUser.staticUser?.name, mail = StaticUser.staticUser?.email,
-                message = if(vabSwitch.isChecked) {
+        val mailAndMessage = MailAndMessage(name = StaticUser.staticUser?.name, personNumber = prsnrTF.text.toString(),
+                mail = StaticUser.staticUser?.email, message = if(vabSwitch.isChecked) {
                 MailTexts.sharedInstance.vabMail(context, nameLabel.text.toString(), prsnrTF.text.toString())
         } else {
                 MailTexts.sharedInstance.sickMail(context, nameLabel.text.toString(), prsnrTF.text.toString())
@@ -168,7 +168,7 @@ class ReportFragment : Fragment() {
 
         (kidRecycler.adapter as KidAdapter).kids.forEach {
             if (it.isSick) {
-                val kidMailAndMessage = MailAndMessage(it.name, it.email,
+                val kidMailAndMessage = MailAndMessage(it.name, it.personNumber, it.email,
                         MailTexts.sharedInstance.sickMail(context, it.name ?: "", it.personNumber ?: ""))
                 StaticUser.mailAndMessages += kidMailAndMessage
             }

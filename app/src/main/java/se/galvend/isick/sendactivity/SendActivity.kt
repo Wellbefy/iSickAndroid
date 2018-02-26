@@ -69,6 +69,8 @@ class SendActivity : AppCompatActivity() {
             alert.twoAction(this, titleText = "Anmäla till försäkringskassan?", message = "", callback = { ok ->
                 if(ok) {
                     checkSMS()
+                } else {
+                    sendMail()
                 }
             })
         } else {
@@ -84,20 +86,17 @@ class SendActivity : AppCompatActivity() {
         }
     }
 
-    private fun sendMail() {
-        val mailManager = MailManager()
-        StaticUser.mailAndMessages.forEach {
-            mailManager.sendMail(it.name ?: "", it.message ?: "", it.mail ?: "", {fault ->
-                if(fault != null) {
-                    Log.d(TAG, fault.message)
-                } else {
-                    uploadEvent()
-                }
-            })
-        }
-    }
-
     private fun sendSMS() {
+        var userPersonNumber: String? = ""
+        var kidPersonNumber: String? = ""
+
+        StaticUser.mailAndMessages.forEach {
+            if(it.name == StaticUser.staticUser?.name) userPersonNumber = it.personNumber?.replace("-", "")
+            else kidPersonNumber = it.personNumber?.replace("-", "")
+        }
+
+        val smsBody = "VAB ${userPersonNumber ?: ""} ${kidPersonNumber ?: ""}"
+
         (viewModel as UserViewModel).fkFireBase.getFKNumber { number ->
             if (number == null) {
                 alert.twoAction(this, "Ojdå! Något gick fel.", "Vill du försöka igen?", { ok ->
@@ -105,15 +104,30 @@ class SendActivity : AppCompatActivity() {
                     else sendMail()
                 })
             } else {
-                SmsManager.getDefault().sendTextMessage(number, null, "", null, null)
+                SmsManager.getDefault().sendTextMessage("0736719163", null, smsBody, null, null)
                 sendMail()
             }
         }
     }
 
+    private fun sendMail() {
+        val mailManager = MailManager()
+        StaticUser.mailAndMessages.forEach {
+            mailManager.sendMail(it.name ?: "", it.message ?: "", it.mail ?: "", {fault ->
+                if(fault != null) {
+                    Log.d(TAG, fault.message)
+                    //visa fel
+                    //return
+                }
+            })
+        }
+        uploadEvent()
+    }
+
     private fun uploadEvent(reported: Boolean = false) {
         if(vab) {
             StaticUser.mailAndMessages.forEach {
+                Log.d(TAG, it.name)
                 (viewModel as UserViewModel).uploadEvent(it.name ?: "", vab, reported)
             }
         } else {
