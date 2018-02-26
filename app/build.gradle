@@ -42,6 +42,8 @@ dependencies {
     kapt "android.arch.lifecycle:compiler:1.1.0"
 
     compile 'com.backendless:backendless:4.4.0'
+
+    compile "org.jetbrains.anko:anko-commons:$anko_version"
 }
 
 apply plugin: 'com.google.gms.google-services'

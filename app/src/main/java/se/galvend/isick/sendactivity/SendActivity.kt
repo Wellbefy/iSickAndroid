@@ -10,7 +10,9 @@ import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.PagerSnapHelper
 import android.telephony.SmsManager
 import android.util.Log
+import android.view.View
 import kotlinx.android.synthetic.main.activity_send.*
+import org.jetbrains.anko.indeterminateProgressDialog
 import se.galvend.isick.R
 import se.galvend.isick.classes.*
 import se.galvend.isick.permissions.PermissionManager
@@ -28,6 +30,8 @@ class SendActivity : AppCompatActivity() {
     private val alert = MyAlertDialog()
 
     private var vab = false
+
+    private var reported = false
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,6 +69,7 @@ class SendActivity : AppCompatActivity() {
     }
 
     private fun send(vab: Boolean) {
+        Log.d(TAG, "loading")
         if(vab) {
             alert.twoAction(this, titleText = "Anmäla till försäkringskassan?", message = "", callback = { ok ->
                 if(ok) {
@@ -89,7 +94,7 @@ class SendActivity : AppCompatActivity() {
     private fun sendSMS() {
         var userPersonNumber: String? = ""
         var kidPersonNumber: String? = ""
-
+        progress(true)
         StaticUser.mailAndMessages.forEach {
             if(it.name == StaticUser.staticUser?.name) userPersonNumber = it.personNumber?.replace("-", "")
             else kidPersonNumber = it.personNumber?.replace("-", "")
@@ -99,12 +104,14 @@ class SendActivity : AppCompatActivity() {
 
         (viewModel as UserViewModel).fkFireBase.getFKNumber { number ->
             if (number == null) {
+                progress(false)
                 alert.twoAction(this, "Ojdå! Något gick fel.", "Vill du försöka igen?", { ok ->
                     if(ok) checkSMS()
                     else sendMail()
                 })
             } else {
-                SmsManager.getDefault().sendTextMessage("0736719163", null, smsBody, null, null)
+                SmsManager.getDefault().sendTextMessage(number, null, smsBody, null, null)
+                reported = true
                 sendMail()
             }
         }
@@ -112,19 +119,30 @@ class SendActivity : AppCompatActivity() {
 
     private fun sendMail() {
         val mailManager = MailManager()
+        var number = 1
+        progress(true)
         StaticUser.mailAndMessages.forEach {
             mailManager.sendMail(it.name ?: "", it.message ?: "", it.mail ?: "", {fault ->
                 if(fault != null) {
                     Log.d(TAG, fault.message)
-                    //visa fel
-                    //return
+                    progress(false)
+                    alert.twoAction(this, "Ojdå! Något gick fel.", "Vill du försöka igen?", { ok ->
+                        if(ok) sendMail()
+                        else finish()
+                    })
+                } else {
+                    if(number >= StaticUser.mailAndMessages.count()) {
+                        Log.d(TAG, "stop loading")
+                        uploadEvent()
+                    }
                 }
+                Log.d(TAG, number.toString())
+                number += 1
             })
         }
-        uploadEvent()
     }
 
-    private fun uploadEvent(reported: Boolean = false) {
+    private fun uploadEvent() {
         if(vab) {
             StaticUser.mailAndMessages.forEach {
                 Log.d(TAG, it.name)
@@ -132,6 +150,21 @@ class SendActivity : AppCompatActivity() {
             }
         } else {
             (viewModel as UserViewModel).uploadEvent(StaticUser.staticUser?.name ?: "")
+        }
+        progress(false)
+        finish()
+    }
+
+    private fun progress(show: Boolean) {
+        val thisProgress = indeterminateProgressDialog("Skickar")
+        if(show) {
+            thisProgress.show()
+            sendButton.visibility = View.INVISIBLE
+            sendBackButton.visibility = View.INVISIBLE
+        } else {
+            thisProgress.dismiss()
+            sendButton.visibility = View.VISIBLE
+            sendBackButton.visibility = View.VISIBLE
         }
     }
 

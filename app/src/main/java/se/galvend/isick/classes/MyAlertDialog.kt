@@ -44,10 +44,10 @@ class MyAlertDialog {
                 .setCustomTitle(title)
                 .setView(customMessage)
                 .setPositiveButton("JA", { _, _ ->
-                    //kod nedanför så knapp ej stänger alertdialog
+
                 })
                 .setNegativeButton("NEJ", { _, _ ->
-                    // dismiss alertdialog
+
                 })
                 .create()
 
@@ -62,6 +62,9 @@ class MyAlertDialog {
             callback(false)
             alertDialog.dismiss()
         }
+    }
 
+    fun loading(context: Context, loading: Boolean) {
+        
     }
 }

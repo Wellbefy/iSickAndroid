@@ -7,8 +7,12 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.support.annotation.UiThread
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,7 +35,21 @@ class HistoryFragment : Fragment() {
         val TAG = "HistroyFragment"
     }
 
-    var viewModel : ViewModel? = null
+    object ThreadUtil {
+        private val mainHandler = Handler(Looper.getMainLooper())
+        fun onMainThread(runnable: Runnable) {
+            mainHandler.post(runnable)
+        }
+        fun cancelRunnable(runnable: Runnable) {
+            mainHandler.removeCallbacks(runnable)
+        }
+    }
+
+    private var viewModel : ViewModel? = null
+    private val timer = Timer()
+
+    private var runnableText: Runnable? = null
+    private var runnableCircle: Runnable? = null
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater!!.inflate(R.layout.fragment_history, container, false)
@@ -69,14 +87,14 @@ class HistoryFragment : Fragment() {
         val workAnimator = ObjectAnimator.ofInt(progressBar, "progress", 0, value.toInt()*1000)
         workAnimator.duration = 1000
         workAnimator.interpolator = LinearInterpolator()
-        activity.runOnUiThread {
+        runnableCircle = Runnable {
             workAnimator.start()
         }
+        if(runnableCircle != null) ThreadUtil.onMainThread(runnableCircle!!)
     }
 
     private fun animateLabels(value: Float, label: TextView) {
         var zero = 0f
-        val timer = Timer()
 
         if (value <= 0) {
            upDateLabelTexts(zero, label)
@@ -94,12 +112,15 @@ class HistoryFragment : Fragment() {
     }
 
     private fun upDateLabelTexts(value: Float, label: TextView) {
-        activity.runOnUiThread {
-            when (label.id) {
-                R.id.workLabel -> label.text = context.getString(R.string.string_workpercent, "%.1f".format(value))
-                R.id.sickLabel -> label.text = context.getString(R.string.string_sickpercent, "%.1f".format(value))
-                R.id.vabLabel -> label.text = context.getString(R.string.string_vabpercent, "%.1f".format(value))
+        if(this.isAdded) {
+            runnableText = Runnable {
+                when (label.id) {
+                    R.id.workLabel -> label.text = "Närvaro:\n${"%.1f".format(value)}"
+                    R.id.sickLabel -> label.text = "Sjuk:\n${"%.1f".format(value)}"
+                    R.id.vabLabel -> label.text = "VAB:\n${"%.1f".format(value)}"
+                }
             }
+            if(runnableText != null) ThreadUtil.onMainThread(runnableText!!)
         }
     }
 
@@ -116,5 +137,6 @@ class HistoryFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         (viewModel as UserViewModel).events.removeObservers(this)
+        timer.cancel()
     }
 }// Required empty public constructor
