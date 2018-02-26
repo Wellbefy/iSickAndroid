@@ -21,8 +21,6 @@ import se.galvend.isick.EditAddKid
 import se.galvend.isick.R
 import se.galvend.isick.classes.*
 import se.galvend.isick.sendactivity.SendActivity
-import java.text.DateFormat
-import java.util.*
 
 class ReportFragment : Fragment() {
     companion object {
@@ -159,22 +157,19 @@ class ReportFragment : Fragment() {
     }
 
     private fun toSend() {
-        val date = Date()
-        val formatter = DateFormat.getDateInstance(DateFormat.DEFAULT)
-        val formattedDate = formatter.format(date)
-
         val mailAndMessage = MailAndMessage(name = StaticUser.staticUser?.name, mail = StaticUser.staticUser?.email,
                 message = if(vabSwitch.isChecked) {
-            getString(R.string.vabmail, formattedDate, nameLabel.text, prsnrTF.text.toString())
+                MailTexts.sharedInstance.vabMail(context, nameLabel.text.toString(), prsnrTF.text.toString())
         } else {
-            getString(R.string.sickmail, formattedDate, nameLabel.text, prsnrTF.text.toString())
+                MailTexts.sharedInstance.sickMail(context, nameLabel.text.toString(), prsnrTF.text.toString())
         })
 
         StaticUser.mailAndMessages += mailAndMessage
 
         (kidRecycler.adapter as KidAdapter).kids.forEach {
             if (it.isSick) {
-                val kidMailAndMessage = MailAndMessage(it.name, it.email, getString(R.string.sickmail, formattedDate, it.name, it.personNumber))
+                val kidMailAndMessage = MailAndMessage(it.name, it.email,
+                        MailTexts.sharedInstance.sickMail(context, it.name ?: "", it.personNumber ?: ""))
                 StaticUser.mailAndMessages += kidMailAndMessage
             }
         }
