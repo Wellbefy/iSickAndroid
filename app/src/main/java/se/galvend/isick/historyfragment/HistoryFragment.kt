@@ -2,6 +2,7 @@ package se.galvend.isick.historyfragment
 
 
 import android.animation.ObjectAnimator
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModel
@@ -111,6 +112,7 @@ class HistoryFragment : Fragment() {
         })
     }
 
+    @SuppressLint("SetTextI18n")
     private fun upDateLabelTexts(value: Float, label: TextView) {
         if(this.isAdded) {
             runnableText = Runnable {
