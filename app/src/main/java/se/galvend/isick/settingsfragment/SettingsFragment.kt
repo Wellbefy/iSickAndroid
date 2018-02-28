@@ -88,7 +88,7 @@ class SettingsFragment : Fragment() {
 
         //Sign out button listener
         signOutButton.setOnClickListener {
-            Log.d(TAG, "Sign out")
+            (viewModel as UserViewModel).signOut(context)
         }
 
         //Return key listener for edit name Edit text

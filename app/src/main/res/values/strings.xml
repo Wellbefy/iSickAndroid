@@ -35,6 +35,12 @@
     <string name="hint_email_till_sjukansvarig">email till sjukansvarig</string>
     <string name="sickmail">%S\n\nHej,\n\n%S, %S, är sjuk idag.\n\nSkickat via\niSick\n\'\appen för snabb frånvaroanmälan\'\.</string>
     <string name="vabmail">%S\n\nHej,\n\n%S, %S, är hemma med sjukt barn idag.\n\nSkickat via\niSick\n\'\appen för snabb frånvaroanmälan\'\.</string>
+    <string name="label_registrera">Till registrering</string>
+    <string name="hint_repeat_password">återupprepa lösenord</string>
+    <string name="hint_namn"><![CDATA[för-& efternamn]]></string>
+    <string name="hint_email_to">email till sjukansvarig</string>
+    <string name="label_tillbaka_till_loggain">Tillbaka till login</string>
+    <string name="label_register">Registrera</string>
     <string-array name="months">
         <item>Januari</item>
         <item>Februari</item>

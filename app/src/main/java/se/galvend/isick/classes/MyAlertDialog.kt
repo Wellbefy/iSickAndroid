@@ -64,7 +64,36 @@ class MyAlertDialog {
         }
     }
 
-    fun loading(context: Context, loading: Boolean) {
-        
+    fun oneAction(context: Context, titleText: String, message: String) {
+        val background = ColorDrawable()
+        background.color = Color.WHITE
+
+        val title = TextView(context)
+        title.setPadding(8, 8, 8, 0)
+        title.text = titleText
+        title.setTextColor(ContextCompat.getColor(context, R.color.colorPrimary))
+        title.typeface = ResourcesCompat.getFont(context, R.font.raleway)
+        title.background = background
+        title.textSize = 24f
+        title.gravity = Gravity.CENTER_HORIZONTAL
+
+        val customMessage = TextView(context)
+        title.setPadding(8, 16, 8, 0)
+        customMessage.text = message
+        customMessage.setTextColor(ContextCompat.getColor(context, R.color.colorPrimary))
+        customMessage.typeface = ResourcesCompat.getFont(context, R.font.raleway)
+        customMessage.background = background
+        customMessage.textSize = 18f
+        customMessage.gravity = Gravity.CENTER
+
+        val alertDialog = AlertDialog.Builder(context)
+                .setCustomTitle(title)
+                .setView(customMessage)
+                .setPositiveButton("OK", { _, _ ->
+
+                })
+                .create()
+
+        alertDialog.show()
     }
 }

@@ -76,6 +76,13 @@ class ReportFragment : Fragment() {
         prsnrTF.setText(fetchedPersonNumber)
         prsnrTF.setSelection(prsnrTF.text.count())
 
+        if(fetchedPersonNumber.isEmpty()) checkUserPersonNumber.visibility = View.INVISIBLE
+        else {
+            if (checkPersonNumber.checkNumber(fetchedPersonNumber)) {
+                checkUserPersonNumber.visibility = View.VISIBLE
+            }
+        }
+
         prsnrTF.addTextChangedListener(object : TextWatcher {
             var inserted = false
             @SuppressLint("SetTextI18n")
